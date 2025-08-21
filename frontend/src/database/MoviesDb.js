@@ -1,0 +1,77 @@
+const movies = [
+  {
+    id: 1,
+    date: "23 May",
+    imageURL: "Images/image.jpg",
+    rating: "8.3",
+    likes: "85k",
+    price: "150",
+  },
+  {
+    id: 2,
+    date: "23 June",
+    imageURL: "Images/aamar-boss-et00439250-1742795131.jpg",
+    rating: "7.3",
+    likes: "70k",
+    price: "150",
+  },
+  {
+    id: 3,
+    date: "3 Aug",
+    imageURL: "Images/bss.jpg",
+    rating: "8.7",
+    likes: "98k",
+    price: "200",
+  },
+  {
+    id: 4,
+    date: "09 JUNE",
+    imageURL: "Images/hit-the-3rd-case-et00410905-1740556769.jpg",
+    rating: "8.3",
+    likes: "85k",
+    price: "150",
+  },
+  {
+    id: 5,
+    date: "15 AUG",
+    imageURL: "Images/imp.jpg",
+    rating: "6.8",
+    likes: "85k",
+    price: "150",
+  },
+  {
+    id: 6,
+    date: "15 AUG",
+    imageURL:
+      "Images/kesari-chapter-2-the-untold-story-of-jallianwala-bagh-et00439158-1744618984.jpg",
+    rating: "6.8",
+    likes: "85k",
+    price: "150",
+  },
+  {
+    id: 7,
+    date: "15 AUG",
+    imageURL: "Images/kullu.jpg",
+    rating: "6.8",
+    likes: "85k",
+    price: "150",
+  },
+  {
+    id: 8,
+    date: "15 AUG",
+    imageURL: "my-project/public/Images/rc.jpg",
+    rating: "6.8",
+    likes: "85k",
+    price: "150",
+  },
+  {
+    id: 9,
+    date: "15 AUG",
+    imageURL: "Images/Rvai gupta.jpg",
+    rating: "6.8",
+    likes: "85k",
+    price: "150",
+  },
+];
+
+export default movies;
