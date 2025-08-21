@@ -59,6 +59,41 @@ app.get("/movies/:id", async (req, res) => {
   }
 });
 
+// Get 4 recommended movies based on genres and likes
+app.get("/movies/:id/recommendations", async (req, res) => {
+  const tmdbId = parseInt(req.params.id); // movie id from URL
+
+  try {
+    // Get genres of the selected movie
+    const movieResult = await pool.query(
+      "SELECT genres FROM current_movies WHERE tmdb_id = $1",
+      [tmdbId]
+    );
+
+    if (movieResult.rows.length === 0) {
+      return res.status(404).json({ error: "Movie not found" });
+    }
+
+    const genres = movieResult.rows[0].genres; // array of genres
+
+    // Fetch 4 most-liked movies with overlapping genres
+    // Add duration to the SELECT fields
+    const recommendations = await pool.query(
+      `SELECT tmdb_id, title, poster_url, rating, likes, duration
+   FROM current_movies
+   WHERE tmdb_id != $1 AND genres && $2::text[]
+   ORDER BY likes DESC
+   LIMIT 4`,
+      [tmdbId, genres]
+    );
+
+    res.json(recommendations.rows);
+  } catch (error) {
+    console.error("Error fetching recommendations:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 app.get("/booking/:id", async (req, res) => {
   const { id } = req.params;
   try {
