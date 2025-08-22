@@ -51,12 +51,11 @@ function Booking(props){
     </div>
 </div>
 <div className="bg-[#09101E] w-full h-fit">
+    {/* TIMINGS AND THEATERS */}
     <div className="py-10 px-10 text-white">
         <Timings/>
         <Timings/>
         <Timings/>
-       
-        
     </div>
     <div className="flex items-center justify-center p-4">
         <div className="w-fit text-center  text-white ">
