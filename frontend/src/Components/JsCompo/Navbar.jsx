@@ -44,7 +44,7 @@ function Navbar() {
         <p>SPORTS</p>
       </div>
       <div className="flex gap-10 px-5">
-        <p>List Your Show</p>
+        <Link to="/listshow"><p>List Your Show</p></Link>
         <p>Corporates</p>
         <p>Offers</p>
         <p>Gift Cards</p>
