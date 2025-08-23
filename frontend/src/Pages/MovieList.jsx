@@ -29,7 +29,7 @@ function MovieList() {
     <div>
       <Navbar />
       {/* ......... */}
-      <div className="bg-[#130620] flex">
+      <div className="bg-[#130620] flex h-screen">
         {/* Sidebar Filters */}
         <div className="w-1/4 text-white p-8">
           <p className="text-2xl">Filters</p>
@@ -103,7 +103,7 @@ function MovieList() {
         </div>
 
         {/* Movies Section */}
-        <div className="text-white p-8 pr-0 w-3/4">
+        <div className="text-white p-8 pr-0 w-3/4 overflow-y-auto h-screen scrollbar-hide">
           <div>
             <p className="text-white text-2xl">Movie Shows In Kolkata</p>
             <div className="flex flex-wrap ">

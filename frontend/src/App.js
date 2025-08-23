@@ -14,6 +14,7 @@ import Event from "./Pages/Event";
 import YourBookings from "./Pages/YourBookings";
 import MovieList from "./Pages/MovieList";
 import Customercare from "./Pages/CustomerCare";
+import SeatSelection from "./Pages/SeatDetail";
 // import Carousel from "./Components/Carousal";
 // import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/eventinfo" element={<EventInfo />}></Route>
         <Route path="/yourbookings" element={<YourBookings />} />
         <Route path="/care" element={<Customercare />} />
+        <Route path="/seats" element={<SeatSelection />} />
       </Routes>
     </Router>
   );
