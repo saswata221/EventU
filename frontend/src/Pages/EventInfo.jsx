@@ -1,6 +1,5 @@
-// Detailed infos of the events except Movies will show here..
-
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../Components/JsCompo/Navbar";
 import Footer from "../Components/JsCompo/Footer";
 import comedyLadder from "../Components/Images/comedyLadder.jpg";
@@ -12,66 +11,173 @@ import { GoPeople } from "react-icons/go";
 import { MdOutlineTheaterComedy } from "react-icons/md";
 import { PiClockUserBold } from "react-icons/pi";
 
-function EventInfo(){
-    return <div>
-        <Navbar/>
-        {/* ......... */}
-        <div className="bg-[#DBE8FF] p-10" >
-            <div className="flex justify-between items-center">
-                <p className="text-3xl font-inria">Comedy Ladder</p> <div className="text-3xl rounded-full p-2 hover:bg-black/20 "><MdOutlineShare/></div>
+function EventInfo() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [event, setEvent] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchEvent = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch(`http://localhost:5000/api/events/${id}`);
+                const data = await response.json();
+                
+                if (data.success) setEvent(data.data);
+                else setError(data.message || 'Failed to fetch event');
+            } catch (err) {
+                setError('Error fetching event data');
+                console.error('Error:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) fetchEvent();
+    }, [id]);
+
+    const formatDateRange = (startDate, endDate) => {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const startFormatted = start.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        const endFormatted = end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        return `${startFormatted} - ${endFormatted}`;
+    };
+
+    const formatLanguages = (languages) => !languages || languages.length === 0 ? 'Not specified' : languages.join(', ');
+
+    const formatDuration = (hours) => {
+        if (!hours) return 'Not specified';
+        if (hours === 1) return '1 hour';
+        if (hours < 1) return `${Math.round(hours * 60)} minutes`;
+        if (hours % 1 === 0) return `${hours} hours`;
+        return `${hours} hours`;
+    };
+
+    const handleProceedToBookings = () => {
+        navigate(`/bookings/${id}`);
+    };
+
+    if (loading) return (
+        <div>
+            <Navbar />
+            <div className="bg-gray-900 p-10 min-h-screen flex items-center justify-center">
+                <p className="text-2xl font-inria text-white animate-pulse">Loading event details...</p>
             </div>
-            <div className="flex py-4  gap-52">
-                <div className="">
-                    <img  src={comedyLadder} alt="comedy" className="rounded-2xl"/>
-                </div>
-               <div className="text-center">
-                 <div className="flex gap-2 items-center  justify-center font-inria">
-                    <FaIndianRupeeSign/><p className="text-lg ">250 onwards</p>
-                </div>
-                <div className="border border-black rounded-xl p-5">
-                    <div className="gap-3 p-1 flex items-center"><FaCalendarDays className="text-2xl font-semibold"/>6th - 27th June 2025</div>
-                    <div className="gap-3 p-1 flex items-center"><FaLanguage className="text-2xl font-semibold"/>English, Hindi</div>
-                    <div className="gap-3 p-1 flex items-center"><GoPeople className="text-2xl font-semibold"/> Age Limit - 16+</div>
-                    <div className="gap-3 p-1 flex items-center"><PiClockUserBold className="text-2xl font-semibold"/> 2 hours</div>
-                    <div className="gap-3 p-1 flex items-center"><MdOutlineTheaterComedy className="text-2xl font-semibold"/> Comedy</div>
-                </div>
-                <button className="bg-[#EF233C] text-white p-2 rounded-lg m-5">Proceed To Bookings </button>
-               </div>
+            <Footer />
+        </div>
+    );
+
+    if (error || !event) return (
+        <div>
+            <Navbar />
+            <div className="bg-gray-900 p-10 min-h-screen flex items-center justify-center">
+                <p className="text-2xl font-inria text-red-500">{error || 'Event not found'}</p>
             </div>
-            <div className="flex">
-                <div className="w-1/2">
-                <p className="text-3xl font-inria">About The Event</p>
-                <p className="py-3">
-                    Comedy Ladder is the mothership to everything comedy. Started in 2016 and now in its 7th year in the industry, Comedy Ladder has built a name for itself. We do shows all over the country. We have shows in venues such as:
-                    - NCPA, Mumbai
-                    - Integral Space, Mumbai
-                    - Jeff Goldberg Studio, Mumbai
-                    - Happy High, Delhi
-                    ...and many more.
-                    Comedy Ladder is not just a base to start, it also provides a stage for comics to do their one-hour solo shows.
-                    We work with the biggest names in the industry such as Aditi Mittal, Jeeya Sethi, Shreeja Chaturvedi, Sumaira Shaikh, Niv Prakasam, Sumukhi Suresh, Prashasti Singh, Kajol Srinivasan, Sonali Thakker, Pavitra Shetty, Gurleen
-                    Pannu, Sherya Priyam Roy, Biswa Kalyan Rath, Siddharth Dudeja, Kunal Kamra, Chirag Punjwani, Ashish Dash,
-                    Anand Reghu, Shridhar V, Navin Noronha and many more!
-                    With over 2000 shows, Comedy Ladder is a household name in the industry.
-                </p>
-               </div>
-               <div>
-                <div>
-                    <p className="text-3xl font-inria pl-3">Artists</p>
-                    <div className="p-3 flex flex-wrap gap-8">
-                        <img src={comedyLadder} alt="artist" className="h-40 w-40 mx-6 bg-orange-400 rounded-full"/>
-                        <img src={comedyLadder} alt="artist" className="h-40 w-40 mx-6 bg-orange-400 rounded-full"/>
-                        <img src={comedyLadder} alt="artist" className="h-40 w-40 mx-6 bg-orange-400 rounded-full"/>
-                        
+            <Footer />
+        </div>
+    );
+
+    return (
+        <div>
+            <Navbar />
+            <div className="bg-[#1A1A2E] p-10 text-white">
+                <div className="flex justify-between items-center">
+                    <p className="text-3xl font-inria text-[#E8D8E0]">{event.title}</p> 
+                    <div className="text-3xl rounded-full p-2 hover:bg-pink-600/20 text-white cursor-pointer">
+                        <MdOutlineShare />
                     </div>
                 </div>
-               </div>
-            </div>
-        </div>
-        {/* ...... */}
-        <Footer/>
-    </div>
-}
 
+                <div className="flex py-4 gap-52">
+                    <div>
+                        <img 
+                            src={event.image_url || comedyLadder} 
+                            alt={event.title} 
+                            className="rounded-2xl w-[720px] h-[360px] object-cover "
+                            onError={(e) => { e.target.src = comedyLadder; }}
+                        />
+                    </div>
+
+                    <div className="text-center">
+                        <div className="flex gap-2 items-center justify-center font-inria text-[#E8D8E0]">
+                            <FaIndianRupeeSign />
+                            <p className="text-lg">{event.price_from} onwards</p>
+                        </div>
+
+                        <div className="border border-gray-700 rounded-xl p-5 bg-slate-800">
+                            <div className="gap-3 p-1 flex items-center text-cyan-300">
+                                <FaCalendarDays className="text-2xl font-semibold" />
+                                {formatDateRange(event.start_date, event.end_date)}
+                            </div>
+                            <div className="gap-3 p-1 flex items-center text-green-300">
+                                <FaLanguage className="text-2xl font-semibold" />
+                                {formatLanguages(event.languages)}
+                            </div>
+                            <div className="gap-3 p-1 flex items-center text-orange-300">
+                                <GoPeople className="text-2xl font-semibold" /> 
+                                Age Limit - {event.age_limit ? `${event.age_limit}+` : 'Not specified'}
+                            </div>
+                            <div className="gap-3 p-1 flex items-center text-purple-300">
+                                <PiClockUserBold className="text-2xl font-semibold" /> 
+                                {formatDuration(event.duration_hours)}
+                            </div>
+                            <div className="gap-3 p-1 flex items-center text-pink-300">
+                                <MdOutlineTheaterComedy className="text-2xl font-semibold" /> 
+                                {event.category}
+                            </div>
+                        </div>
+
+                        <button 
+                            onClick={handleProceedToBookings}
+                            className="bg-[#EF233C]/90 hover:bg-[#EF233C]/70 text-white p-2 rounded-lg m-5 cursor-pointer transition-colors duration-200"
+                        >
+                            Proceed To Bookings
+                        </button>
+                    </div>
+                </div>
+
+                <div className="flex">
+                    <div className="w-1/2 pr-5">
+                        <p className="text-3xl font-inria text-[#E8D8E0]">About The Event</p>
+                        <p className="py-3 text-gray-200">{event.description || 'No description available for this event.'}</p>
+                        {event.venue && (
+                            <div className="py-2">
+                                <p className="text-lg font-semibold text-cyan-300">Venue: {event.venue}</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div>
+                        <p className="text-3xl font-inria pl-10 text-[#E8D8E0]">Artists</p>
+                        <div className="p-3 flex flex-wrap ">
+                            {event.artist_names && event.artist_names.length > 0 ? (
+                                event.artist_names.map((artistName, index) => (
+                                    <div key={index} className="text-center">
+                                        <img 
+                                            src={event.artist_images && event.artist_images[index] ? 
+                                                event.artist_images[index] : comedyLadder} 
+                                            alt={artistName} 
+                                            className="h-32 w-32 mx-6  rounded-full object-cover shadow-lg "
+                                            onError={(e) => { e.target.src = comedyLadder; }}
+                                        />
+                                        <p className="mt-2 font-inria text-lg text-purple-300">{artistName}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center w-full">
+                                    <p className="text-gray-400">No artists information available</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <Footer />
+        </div>
+    );
+}
 
 export default EventInfo;

@@ -27,7 +27,7 @@ function Navbar() {
           Location
           <TiArrowSortedDown />
         </p>
-        <p>Events</p>
+        <Link to="/event"><p>Events</p></Link>
         <p>Contact Us</p>
         <p className="bg-[#EF233C] px-3 py-1 text-white rounded-3xl">Sign In</p>
         <FaRegUserCircle className="scale-150" />
@@ -40,7 +40,9 @@ function Navbar() {
           Generes <TiArrowSortedDown />
         </p>
         <p>TV Shows</p>
+        <Link to="/movielist">
         <p>Movies</p>
+        </Link>
         <p>SPORTS</p>
       </div>
       <div className="flex gap-10 px-5">

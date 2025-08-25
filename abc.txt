@@ -1,0 +1,57 @@
+-- Single Events Table with Artists Data
+CREATE TABLE events (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_url VARCHAR(500),
+    price_from DECIMAL(10,2) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    languages VARCHAR(255)[], -- Array of languages
+    age_limit INTEGER,
+    duration_hours DECIMAL(3,1), -- e.g., 2.5 for 2.5 hours
+    category VARCHAR(100) NOT NULL, -- Comedy, Music, Theater, etc.
+    venue VARCHAR(255),
+    artist_names VARCHAR(255)[], -- Array of artist names
+    artist_images VARCHAR(500)[], -- Array of artist image URLs
+    status VARCHAR(50) DEFAULT 'active', -- active, cancelled, sold_out
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes for better query performance
+CREATE INDEX idx_events_category ON events(category);
+CREATE INDEX idx_events_date_range ON events(start_date, end_date);
+CREATE INDEX idx_events_status ON events(status);
+
+-- Sample data insertion
+INSERT INTO events (
+    title, 
+    description, 
+    image_url, 
+    price_from, 
+    start_date, 
+    end_date, 
+    languages, 
+    age_limit, 
+    duration_hours, 
+    category, 
+    venue,
+    artist_names,
+    artist_images
+) 
+VALUES (
+    'Comedy Ladder',
+    'Comedy Ladder is the mothership to everything comedy. Started in 2016 and now in its 7th year in the industry, Comedy Ladder has built a name for itself. We do shows all over the country. We work with the biggest names in the industry and have over 2000 shows under our belt.',
+    '/images/comedyLadder.jpg',
+    250.00,
+    '2025-06-06',
+    '2025-06-27',
+    ARRAY['English', 'Hindi'],
+    16,
+    2.0,
+    'Comedy',
+    'Various Venues',
+    ARRAY['Aditi Mittal', 'Biswa Kalyan Rath', 'Kunal Kamra', 'Sumukhi Suresh'],
+    ARRAY['/images/artists/aditi-mittal.jpg', '/images/artists/biswa.jpg', '/images/artists/kunal-kamra.jpg', '/images/artists/sumukhi.jpg']
+);

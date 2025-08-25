@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom"; // ✅ Add this
+import { Link } from "react-router-dom";
 import PText from "./PText";
 import Pimage from "./Pimage";
 
@@ -10,7 +10,7 @@ function Card(props) {
   if (props.date) {
     const parts = props.date.split("-");
     if (parts.length === 3) {
-      const rawDay = parts[2].split("T")[0];  // "03T18:30:00.000Z" → "03"
+      const rawDay = parts[2].split("T")[0];
       day = rawDay;
 
       const monthMap = {
@@ -24,8 +24,13 @@ function Card(props) {
 
   const rating = parseFloat(props.rating).toFixed(1);
 
+  // Determine the link path based on type
+  const linkPath = props.type === 'event' 
+    ? `/eventinfo/${props.tmdb_id}` 
+    : `/movie/${props.tmdb_id}`;
+
   return (
-   <Link to={`/movie/${props.tmdb_id}`}>
+    <Link to={linkPath}>
       <div className="mx-5 my-4 hover:scale-[101%] w-[230px]">
         <div className="bg-[#0b131c] rounded-3xl text-white relative">
           <div className="absolute top-0 right-0 bg-[#EF233C] text-white rounded-tr-3xl w-10 flex flex-col items-center justify-start py-1 px-1 ">

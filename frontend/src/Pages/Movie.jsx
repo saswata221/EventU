@@ -127,7 +127,6 @@ function Movie() {
 </div>
 
       </div>
-
       <Footer />
     </div>
   );

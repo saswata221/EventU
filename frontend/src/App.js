@@ -1,7 +1,4 @@
 import React from "react";
-// import Card from "./Components/Card";
-// import Navbar from "./Components/Navbar";
-// import Footer from "./Components/Footer";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./Components/JsCompo/ScrollTop";
 import Movie from "./Pages/Movie";
@@ -15,8 +12,6 @@ import YourBookings from "./Pages/YourBookings";
 import MovieList from "./Pages/MovieList";
 import Customercare from "./Pages/CustomerCare";
 import SeatSelection from "./Pages/SeatDetail";
-// import Carousel from "./Components/Carousal";
-// import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 
 function App() {
   return (
@@ -28,9 +23,10 @@ function App() {
         <Route path="/movielist" element={<MovieList />}></Route>
         <Route path="/Event" element={<Event />}></Route>
         <Route path="/booking/:id" element={<Booking />}></Route>
+        <Route path="/bookings/:id" element={<Booking />}></Route>{" "}
         <Route path="/login" element={<LogIn />}></Route>
         <Route path="/listshow" element={<ListShow />}></Route>
-        <Route path="/eventinfo" element={<EventInfo />}></Route>
+        <Route path="/eventinfo/:id" element={<EventInfo />}></Route>
         <Route path="/yourbookings" element={<YourBookings />} />
         <Route path="/care" element={<Customercare />} />
         <Route path="/seats" element={<SeatSelection />} />
