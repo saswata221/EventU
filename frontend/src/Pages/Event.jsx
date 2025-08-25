@@ -1,69 +1,143 @@
 // All the events except Movies will be listed here....
 
-import React, { useState} from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../Components/JsCompo/Navbar";
 import Footer from "../Components/JsCompo/Footer";
 import Card from "../Components/JsCompo/Card";
-import MoviesDb from "../database/MoviesDb";
 
+function EventList() {
+  const [events, setEvents] = useState([]);
+  const [genreOpen, setGenreOpen] = useState(false);
+  const [ratingOpen, setRatingOpen] = useState(false);
 
-function Event(){
-    const [genre,setGenre] = useState(false);
+  const [selectedGenre, setSelectedGenre] = useState("");
+  const [selectedRating, setSelectedRating] = useState("");
 
+  // 🔹 Fetch events whenever filters change
+  useEffect(() => {
+    let url = "http://localhost:5000/api/events?";
+    if (selectedGenre) url += `category=${selectedGenre}&`;
+    if (selectedRating) url += `rating=${selectedRating}&`;
 
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setEvents(data.data);
+        } else {
+          setEvents([]);
+        }
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, [selectedGenre, selectedRating]);
 
+  return (
+    <div>
+      <Navbar />
+      {/* ......... */}
+      <div className="bg-[#130620] flex h-screen">
+        {/* Sidebar Filters */}
+        <div className="w-1/4 text-white p-8">
+          <p className="text-2xl">Filters</p>
 
-    return <div>
-        <Navbar/>
-        {/* ......... */}
-        <div className="bg-[#09101E] flex">
-            <div className="w-1/4 text-white p-8">                
-                <p className="text-2xl">Filters</p>
-                <div className="bg-white text-black/80 rounded-md mt-4">
-                    <div className="cursor-pointer flex " onClick={()=>setGenre((prev)=>!prev)}>
-                        <p className="text-xl p-2 pl-4 ">Genres</p>
-                    </div>
-                    { genre &&
-                    <div className=" w-full p-2 rounded-sm">
-                    <ul className="flex  flex-wrap gap-x-3 text-[#EF233C] gap-y-2 text-sm pl-2">
-                        <li className="py-[2px] px-2 border border-slate-400 rounded-sm">Standup Comedy</li>
-                        <li className="py-[2px] px-2 border border-slate-400 rounded-sm">Kids</li>
-                        <li className="py-[2px] px-2 border border-slate-400 rounded-sm">OpenMic</li>
-                        <li className="py-[2px] px-2 border border-slate-400 rounded-sm">Music Show</li>
-                        <li className="py-[2px] px-2 border border-slate-400 rounded-sm">Shyari</li>
-                        <li className="py-[2px] px-2 border border-slate-400 rounded-sm">Magic Show</li>
-                       
-                    </ul>
-                    </div>
-                    }
-                </div>
+          {/* Category Filter */}
+          <div className="bg-white text-black/80 rounded-md mt-4">
+            <div
+              className="cursor-pointer flex"
+              onClick={() => setGenreOpen((prev) => !prev)}
+            >
+              <p className="text-xl p-2 pl-4">Categories</p>
             </div>
-            <div className="text-white p-8 pr-0 w-3/4">
-                <div>
-                    <p className="text-white text-2xl">Shows In Kolkata</p>
-                    <div className="flex flex-wrap p-4">
-                        {MoviesDb.map((movie) => (
-                                      <Card
-                                        key={movie.id}
-                                        date={movie.date}
-                                        image={movie.imageURL}
-                                        rating={movie.rating}
-                                        likes={movie.likes}
-                                        price={movie.price}
-                                      />
-                                    ))}
+            {genreOpen && (
+              <div className="w-full p-2 rounded-sm">
+                <ul className="flex flex-wrap gap-x-3 text-[#EF233C] gap-y-2 text-sm pl-2">
+                  {["Comedy", "Music", "Theater", "Dance", "Workshop", "Sports"].map(
+                    (g) => (
+                      <li
+                        key={g}
+                        onClick={() => setSelectedGenre(g)}
+                        className={`py-[2px] px-2 border border-slate-400 rounded-sm cursor-pointer 
+                          ${selectedGenre === g ? "bg-[#EF233C] text-white" : ""}`}
+                      >
+                        {g}
+                      </li>
+                    )
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
 
-                    </div>
-                </div>
+          {/* Rating Filter */}
+          <div className="bg-white text-black/80 rounded-md mt-3">
+            <div
+              className="cursor-pointer flex"
+              onClick={() => setRatingOpen((prev) => !prev)}
+            >
+              <p className="text-xl p-2 pl-4">Ratings</p>
             </div>
+            {ratingOpen && (
+              <div className="w-full p-2 rounded-sm">
+                <ul className="flex flex-wrap gap-x-3 text-[#EF233C] gap-y-2 text-sm pl-2">
+                  {[9,8,7,6,5, 4, 3].map((r) => (
+                    <li
+                      key={r}
+                      onClick={() => setSelectedRating(r)}
+                      className={`py-[2px] px-2 border border-slate-400 rounded-sm cursor-pointer 
+                        ${selectedRating === r ? "bg-[#EF233C] text-white" : ""}`}
+                    >
+                      {r}+
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Clear Filters */}
+          {(selectedGenre || selectedRating) && (
+            <button
+              onClick={() => {
+                setSelectedGenre("");
+                setSelectedRating("");
+              }}
+              className="mt-4 bg-gray-600 text-white px-4 py-2 rounded"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
 
+        {/* Events Section */}
+        <div className="text-white p-8 pr-0 w-3/4 overflow-y-auto h-screen scrollbar-hide">
+          <div>
+            <p className="text-white text-2xl">Event Shows In Kolkata</p>
+            <div className="flex flex-wrap ">
+              {events.length === 0 ? (
+                <p className="text-gray-400">No events found.</p>
+              ) : (
+                events.map((event) => (
+                  <Card
+                    key={event.id}
+                    tmdb_id={event.id}
+                    date={event.start_date}
+                    image={event.image_url}
+                    rating={event.rating || 0}
+                    likes={event.likes ? event.likes + "k" : "0k"}
+                    price={event.price_from}
+                    type="event" // Add this line
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
 
-
-{/* .......... */}
-        <Footer/>
+      {/* .......... */}
+      <Footer />
     </div>
+  );
 }
 
-
-export default Event;
+export default EventList;

@@ -75,7 +75,6 @@ function CustomerCare() {
 
       <div className="max-w-6xl mx-auto px-6 py-12 space-y-16">
         {/* FAQ Section */}
-        {/* FAQ Section */}
 <section>
   <h2 className="text-3xl font-bold text-cyan-400 mb-12 text-center">
      Frequently Asked Questions
