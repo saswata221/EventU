@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FiSearch } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { IoIosStar } from "react-icons/io";
+
 function Search() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -10,9 +11,9 @@ function Search() {
   useEffect(() => {
     if (query.length > 1) {
       fetch(`http://localhost:5000/search?q=${query}`)
-        .then(res => res.json())
-        .then(data => setResults(data))
-        .catch(err => console.error("Search error:", err));
+        .then((res) => res.json())
+        .then((data) => setResults(data))
+        .catch((err) => console.error("Search error:", err));
     } else {
       setResults([]);
     }
@@ -43,7 +44,7 @@ function Search() {
         <input
           type="text"
           value={query}
-          onChange={e => setQuery(e.target.value)}
+          onChange={(e) => setQuery(e.target.value)}
           placeholder="Search Movies, Events, Shows & more"
           className="w-[90%] pl-10 pr-4 py-2 rounded-2xl border border-gray-300 shadow-sm 
                      focus:outline-none focus:ring-2 focus:ring-indigo-600 
@@ -58,21 +59,27 @@ function Search() {
           {results.map((item) => (
             <Link
               key={item.tmdb_id}
-              to={`/movie/${item.tmdb_id}`}
+              to={
+                item.type === "event"
+                  ? `/eventinfo/${item.tmdb_id}`
+                  : `/movie/${item.tmdb_id}`
+              }
               className="flex items-center justify-between gap-3 px-4 py-2 rounded-xl hover:bg-[#E0EBFF] transition"
             >
               {/* Poster Image */}
               <img
                 src={
-                  item.poster_url
-                    ? `https://image.tmdb.org/t/p/w92${item.poster_url}`
+                  item.type === "event"
+                    ? item.poster_url || "/fallback-poster.png" // event posters are full URLs
+                    : item.poster_url
+                    ? `https://image.tmdb.org/t/p/w92${item.poster_url}` // movies need TMDB base
                     : "/fallback-poster.png"
                 }
                 alt={item.title}
                 className="w-10 h-14 object-cover rounded flex-shrink-0"
               />
 
-              {/* Title + Cast */}
+              {/* Title + Cast/Artists */}
               <div className="flex flex-col flex-1 min-w-0">
                 <p className="font-semibold text-[#EF233C] truncate">
                   {item.title}
@@ -83,8 +90,13 @@ function Search() {
               </div>
 
               {/* Rating */}
-              <span className="ml-2 flex items-center justify-start  px-2 py-1 rounded-lg text-black whitespace-nowrap gap-[2px]">
-                <s className="text-[#EF233C] font-bold"><IoIosStar/></s> { (item.rating === 0 ? "5.0" :parseFloat(item.rating).toFixed(1)) || "N/A"}
+              <span className="ml-2 flex items-center justify-start px-2 py-1 rounded-lg text-black whitespace-nowrap gap-[2px]">
+                <s className="text-[#EF233C] font-bold">
+                  <IoIosStar />
+                </s>{" "}
+                {item.rating === 0
+                  ? "5.0"
+                  : parseFloat(item.rating).toFixed(1) || "N/A"}
               </span>
             </Link>
           ))}

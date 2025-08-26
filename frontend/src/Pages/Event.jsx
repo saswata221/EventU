@@ -41,32 +41,32 @@ function EventList() {
           <p className="text-2xl">Filters</p>
 
           {/* Category Filter */}
-          <div className="bg-white text-black/80 rounded-md mt-4">
-            <div
-              className="cursor-pointer flex"
-              onClick={() => setGenreOpen((prev) => !prev)}
-            >
-              <p className="text-xl p-2 pl-4">Categories</p>
-            </div>
-            {genreOpen && (
-              <div className="w-full p-2 rounded-sm">
-                <ul className="flex flex-wrap gap-x-3 text-[#EF233C] gap-y-2 text-sm pl-2">
-                  {["Comedy", "Music", "Theater", "Dance", "Workshop", "Sports"].map(
-                    (g) => (
-                      <li
-                        key={g}
-                        onClick={() => setSelectedGenre(g)}
-                        className={`py-[2px] px-2 border border-slate-400 rounded-sm cursor-pointer 
-                          ${selectedGenre === g ? "bg-[#EF233C] text-white" : ""}`}
-                      >
-                        {g}
-                      </li>
-                    )
-                  )}
-                </ul>
-              </div>
-            )}
-          </div>
+          {/* Category Filter */}
+<div className="bg-white text-black/80 rounded-md mt-4">
+  <div
+    className="cursor-pointer flex"
+    onClick={() => setGenreOpen((prev) => !prev)}
+  >
+    <p className="text-xl p-2 pl-4">Categories</p>
+  </div>
+  {genreOpen && (
+    <div className="w-full p-2 rounded-sm">
+      <ul className="flex flex-wrap gap-x-3 text-[#EF233C] gap-y-2 text-sm pl-2">
+        {["Comedy", "Music", "Workshops"].map((g) => (
+          <li
+            key={g}
+            onClick={() => setSelectedGenre(g)}
+            className={`py-[2px] px-2 border border-slate-400 rounded-sm cursor-pointer 
+              ${selectedGenre === g ? "bg-[#EF233C] text-white" : ""}`}
+          >
+            {g}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</div>
+
 
           {/* Rating Filter */}
           <div className="bg-white text-black/80 rounded-md mt-3">
@@ -121,11 +121,11 @@ function EventList() {
                     key={event.id}
                     tmdb_id={event.id}
                     date={event.start_date}
-                    image={event.image_url}
+                    image={event.poster_url}
                     rating={event.rating || 0}
                     likes={event.likes ? event.likes + "k" : "0k"}
                     price={event.price_from}
-                    type="event" // Add this line
+                    type="event"
                   />
                 ))
               )}
