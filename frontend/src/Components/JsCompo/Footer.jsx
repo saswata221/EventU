@@ -54,12 +54,12 @@ function Footer(){
                 <p>Profile</p>
             </div>
             <div className="text-white font-thin text-center my-2">
-                <h2 className="font-bold underline underline-offset-2">User Bookings</h2>
-                <p>My Bookings</p>
-                <p>Cancel Bookings</p>
-                <p>Reschedule Booking</p>
-                <p>Payment History</p>
-                <p>Profile</p>
+                <h2 className="font-bold underline underline-offset-2">Payment Partners</h2>
+                <p>Google Pay</p>
+                <p>Paytm</p>
+                <p>PayPal</p>
+                <p>RazorPay</p>
+                {/* <p>Profile</p> */}
             </div>
             <div className="text-white font-thin text-center my-2 block">
                 <h2 className="font-bold underline underline-offset-2">Subscribe Newsteller</h2>
@@ -69,19 +69,11 @@ function Footer(){
             </div>
             <div className="text-white font-thin text-center my-2">
                 <h2 className="font-bold underline underline-offset-2">User Bookings</h2>
-                <p>My Bookings</p>
-                <p>Cancel Bookings</p>
-                <p>Reschedule Booking</p>
-                <p>Payment History</p>
-                <p>Profile</p>
-            </div>
-            <div className="text-white font-thin text-center my-2">
-                <h2 className="font-bold underline underline-offset-2">User Bookings</h2>
-                <p>My Bookings</p>
-                <p>Cancel Bookings</p>
-                <p>Reschedule Booking</p>
-                <p>Payment History</p>
-                <p>Profile</p>
+                <p>Email:support@evnevtU.in</p>
+                <p>Phone:+91-98765-43210</p>
+                <p>Address:EventU Private Ltd 42C,</p>
+                <p>Sunrise Business Park, Sector V,</p>
+                <p>Kolkata,West Bengal-700091,India</p>
             </div>
         </div>
         <div className="text-white font-light bg-[#1b263b] flex justify-center pt-8 pb-4 italic">

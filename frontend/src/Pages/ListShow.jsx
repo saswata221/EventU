@@ -26,12 +26,12 @@ function ListShow(){
 
         <div className="flex justify-center items-center p-10">
             <div className="flex flex-wrap justify-center gap-10 w-4/5">
-                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg hover:bg-[#c9184a] hover:scale-105 transition-all duration-300 ease-in-out "> <img src={performance} alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Performance</p></div>
-                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg hover:bg-[#c9184a] hover:scale-105 transition-all duration-300 ease-in-out "> <img src={castle} alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Experience</p></div>
-                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg hover:bg-[#c9184a] hover:scale-105 transition-all duration-300 ease-in-out "> <img src={sports} alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Sports</p></div>
-                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg hover:bg-[#c9184a] hover:scale-105 transition-all duration-300 ease-in-out "> <img src={disco} alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Party</p></div>
-                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg hover:bg-[#c9184a] hover:scale-105 transition-all duration-300 ease-in-out "> <img src={exhivition} alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Exhibition</p></div>
-                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg hover:bg-[#c9184a] hover:scale-105 transition-all duration-300 ease-in-out "> <img src={conference} alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Conference</p></div>              
+                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg   transition-all duration-300 ease-in-out "> <img src={performance} className="hover:scale-110" alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Performance</p></div>
+                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg   transition-all duration-300 ease-in-out "> <img src={castle} className="hover:scale-110" alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Experience</p></div>
+                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg   transition-all duration-300 ease-in-out "> <img src={sports} className="hover:scale-110" alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Sports</p></div>
+                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg   transition-all duration-300 ease-in-out "> <img src={disco} className="hover:scale-110" alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Party</p></div>
+                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg   transition-all duration-300 ease-in-out "> <img src={exhivition} className="hover:scale-110" alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Exhibition</p></div>
+                <div className="w-72 h-80 p-4 bg-[#BBE4A0] rounded-lg   transition-all duration-300 ease-in-out "> <img src={conference} className="hover:scale-110" alt="performance"/> <p className=" font-yatra text-xl text-center pt-2">Conference</p></div>              
             </div>
         </div>
         <div className="flex justify-center">
