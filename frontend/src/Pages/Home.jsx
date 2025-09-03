@@ -11,7 +11,6 @@ import fanfav from "../database/FanFav";
 import OpenAir from "../database/OpenAir.js";
 import OpenAirCard from "../Components/JsCompo/OpenAirCard";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
-// import MoviesDb from "../database/MoviesDb";
 
 
 
@@ -75,13 +74,9 @@ function Home (){
             <div>
                 <div className=" flex justify-center w-[100%] mt-2 mb-5">
                     <div className="flex flex-wrap gap-4 justify-center bg-[#f0e0c9] py-3 px-2 rounded-3xl w-fit ">
-                      {/* <FavCard/> <FavCard/><FavCard/> <FavCard/> <FavCard/> */}
-                      {fanfav.map((fab)=>(
-                        <FavCard
-                        key={fab.id}
-                        imageURL={fab.imageURL}
-                        />
-                      ))}
+                      {fanfav.map(item => (
+  <FavCard key={item.id} imageURL={item.imageURL} category={item.category} />
+))}
                     </div>
                 </div>
             </div>
