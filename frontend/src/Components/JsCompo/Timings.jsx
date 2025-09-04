@@ -1,33 +1,67 @@
-import React  from "react";
+// src/Components/JsCompo/Timings.jsx
+import React, { useState } from "react";
 import { FaHeart } from "react-icons/fa6";
 import { IoIosInformationCircle } from "react-icons/io";
-import SelectTime from "./Select_time";
 
-function Timings(){
-    return <div className="flex mb-4 bg-white/10  rounded-lg p-1 justify-between">
-                <div className=" p-5 border-r-2 border-white">
-                    <div className="flex gap-2 text-center items-center "><FaHeart className="scale-150  hover:text-[#EF233C]"/><p>INOX : South City Mall,Kolkata</p></div>
-                    <div className="text-center text-sm pt-2">Cancellation Available</div>
-                </div>
-                <div className=" flex flex-wrap py-3 px-8 gap-x-4 justify-start">
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    <SelectTime/>
-                    
-                </div>
-                <div><IoIosInformationCircle className="scale-130"/></div>
-            </div>
-};
+// Props:
+// - theatreName: string
+// - slots: string[] (ISO timestamps)
+// - format: (iso)=>string display
+// - onProceed: (iso)=>void  // called when Proceed is clicked with selected slot
+export default function Timings({ theatreName, slots = [], format, onProceed }) {
+  const [selectedIso, setSelectedIso] = useState(null);
 
-export default Timings;
+  return (
+    // inline-flex + w-fit makes the card hug its content instead of full width
+    <div className="inline-flex items-stretch mb-4 rounded-lg bg-white/10 p-2 w-fit max-w-full gap-2">
+      {/* Left: theatre / hall */}
+      <div className="px-4 py-3 border-r border-white/30">
+        <div className="flex items-center gap-2">
+         
+          <p className="font-medium">{theatreName}</p>
+        </div>
+        <div className="text-xs pt-1 text-white/80">Cancellation Available</div>
+      </div>
+
+      {/* Middle: time slots */}
+      <div className="flex flex-wrap items-center gap-2 py-2 px-3">
+        {slots && slots.length > 0 ? (
+          slots.map((iso, idx) => {
+            const active = selectedIso === iso;
+            return (
+              <button
+                key={`${iso}-${idx}`}
+                onClick={() => setSelectedIso(iso)}
+                className={`min-w-[84px] rounded border px-3 py-1.5 text-sm transition
+                  ${active
+                    ? "bg-white text-black border-white"
+                    : "bg-white/10 text-white border-white/40 hover:bg-white/20"
+                  }`}
+                title={new Date(iso).toLocaleString()}
+              >
+                {format ? format(iso) : iso}
+              </button>
+            );
+          })
+        ) : (
+          <span className="text-sm text-white/70">No timings</span>
+        )}
+      </div>
+
+      {/* Right: info + Proceed button */}
+      <div className="flex items-center gap-2 pr-2 pl-1">
+        <IoIosInformationCircle className="opacity-80" />
+        <button
+          disabled={!selectedIso}
+          onClick={() => selectedIso && onProceed?.(selectedIso)}
+          className={`rounded-md px-4 py-1.5 text-sm font-medium transition
+            ${selectedIso
+              ? "bg-[#EF233C] text-white hover:bg-[#d61f34]"
+              : "bg-white/10 text-white/50 cursor-not-allowed"}`}
+        >
+          Proceed
+        </button>
+      </div>
+    </div>
+  );
+}

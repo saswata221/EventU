@@ -1,14 +1,11 @@
+// server/routes/movieRoutes.js
 const express = require("express");
-const {
-  getAllMovies,
-  getMovieById,
-  getRecommendations,
-} = require("../controllers/movieController");
-
 const router = express.Router();
+const movieController = require("../controllers/movieController");
 
-router.get("/", getAllMovies);
-router.get("/:id", getMovieById);
-router.get("/:id/recommendations", getRecommendations);
+// Public read
+router.get("/", movieController.getAllMovies);
+router.get("/:id", movieController.getMovieById);
+router.get("/:id/recommendations", movieController.getRecommendations);
 
 module.exports = router;

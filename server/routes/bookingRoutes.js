@@ -1,9 +1,13 @@
+// server/routes/bookingRoutes.js
 const express = require("express");
-const { getBookingData } = require("../controllers/bookingController");
-
 const router = express.Router();
+const bookingController = require("../controllers/bookingController");
+const requireAuth = require("../middleware/requireAuth");
 
-// Get booking details by movie ID
-router.get("/:id", getBookingData);
+// Public route – get theatres/halls + showtimes
+router.get("/:id", bookingController.getBookingData);
+
+// Protected route – create booking
+router.post("/", requireAuth, bookingController.createBooking);
 
 module.exports = router;

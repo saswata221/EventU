@@ -1,16 +1,33 @@
-import { Link } from "react-router-dom";
+// src/Components/JsCompo/Navbar.jsx
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../Images/logo.png";
 import { IoLocationSharp } from "react-icons/io5";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { FaRegUserCircle } from "react-icons/fa";
 import { TiThMenu } from "react-icons/ti";
+import { useAuth } from "../../context/AuthContext"; 
 import Search from "./SearchBar";
+import { useMemo, useState } from "react";
 
-// Accept onLoginClick from Home to open the modal (no navigation to /login)
 function Navbar({ onLoginClick }) {
+  const navigate = useNavigate();
+  const { user, logout, openAuthModal } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const firstName = useMemo(() => {
+    if (!user?.name) return "";
+    return user.name.trim().split(" ")[0];
+  }, [user]);
+
+  async function onLogout() {
+    await logout();
+    navigate("/");
+  }
+
   return (
     <div className="bg-[#]">
-      <div className="flex h-[83px] w-full flex-wrap items-center justify-between bg-[#1A1A2E] text-white">
+      {/* Header bar */}
+      <div className="flex h-[83px] w-full flex-wrap items-center justify-between bg-[#1A1A2E] text-white relative z-50">
         <div className="pl-20">
           <Link to="/">
             <img
@@ -29,22 +46,62 @@ function Navbar({ onLoginClick }) {
             Location
             <TiArrowSortedDown />
           </p>
-          <Link to="/event"><p>Events</p></Link>
+          <Link to="/event">
+            <p>Events</p>
+          </Link>
           <p>Contact Us</p>
 
-          {/* Opens the login modal */}
-          <button
-            onClick={onLoginClick}
-            className="rounded-3xl bg-[#EF233C] px-3 py-1 text-white"
-          >
-            Sign In
-          </button>
+          {/* Auth area */}
+          {!user ? (
+            <button
+              onClick={onLoginClick || openAuthModal}
+              className="rounded-3xl bg-[#EF233C] px-3 py-1 text-white"
+            >
+              Sign In
+            </button>
+          ) : (
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen((s) => !s)}
+                className="flex items-center gap-2 rounded-3xl bg-white/10 px-3 py-1 hover:bg-white/15"
+              >
+                <FaRegUserCircle />
+                <span className="font-semibold">Hi, {firstName}</span>
+              </button>
 
-          <FaRegUserCircle className="scale-150" />
-          <TiThMenu className="scale-150" />
+              {menuOpen && (
+                <div
+                  className="absolute right-0 mt-2 w-44 rounded-md bg-white text-slate-800 shadow-lg ring-1 ring-black/5 z-50"
+                  onMouseLeave={() => setMenuOpen(false)}
+                >
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      navigate("/yourbookings");
+                    }}
+                    className="block w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                  >
+                    Your Bookings
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onLogout();
+                    }}
+                    className="block w-full px-4 py-2 text-left text-sm text-rose-600 hover:bg-rose-50"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          <TiThMenu className="scale-150 cursor-pointer" />
         </div>
       </div>
 
+      {/* Secondary row */}
       <div className="flex justify-between bg-[#51557E] text-white">
         <div className="flex gap-10 px-5">
           <p className="flex items-center">
@@ -57,7 +114,9 @@ function Navbar({ onLoginClick }) {
           <p>SPORTS</p>
         </div>
         <div className="flex gap-10 px-5">
-          <Link to="/listshow"><p>List Your Show</p></Link>
+          <Link to="/listshow">
+            <p>List Your Show</p>
+          </Link>
           <p>Corporates</p>
           <p>Offers</p>
           <p>Gift Cards</p>

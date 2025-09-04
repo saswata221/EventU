@@ -1,6 +1,13 @@
+// server/routes/searchRoutes.js
 const express = require("express");
-const { unifiedSearch } = require("../controllers/searchController");
-
 const router = express.Router();
-router.get("/", unifiedSearch);
+const searchController = require("../controllers/searchController");
+
+router.get(
+  "/",
+  searchController.unifiedSearch ||
+    searchController.search ||
+    ((_req, res) => res.json([]))
+);
+
 module.exports = router;
