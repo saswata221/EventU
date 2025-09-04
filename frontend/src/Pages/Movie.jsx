@@ -114,7 +114,7 @@ function Movie() {
       <div className="bg-[#09101e] h-fit w-full text-white">
         <div className="flex justify-between">
           <h1 className="p-5 pb-0 text-lg">You may also like</h1>
-          <p className="p-5 pb-0 flex items-center gap-1">See All <IoIosArrowForward className="text-[#EF233C]" /></p>
+          <Link to={'/movielist'}><p className="p-5 pb-0 flex items-center gap-1">See All <IoIosArrowForward className="text-[#EF233C]" /></p></Link>
         </div>
         <div className="flex flex-wrap justify-between p-5">
   {recommendations.length > 0 ? (

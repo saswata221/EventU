@@ -1,117 +1,130 @@
-//HOME page of the website
-
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Card from "../Components/JsCompo/Card";
+
 import Navbar from "../Components/JsCompo/Navbar";
 import Footer from "../Components/JsCompo/Footer";
 import Carousel from "../Components/JsCompo/Carousal";
+import Card from "../Components/JsCompo/Card";
 import FavCard from "../Components/JsCompo/FavCard";
+import OpenAirCard from "../Components/JsCompo/OpenAirCard";
+
 import fanfav from "../database/FanFav";
 import OpenAir from "../database/OpenAir.js";
-import OpenAirCard from "../Components/JsCompo/OpenAirCard";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 
+import Modal from "../Components/JsCompo/Modal.jsx";
+import LogIn from "./LogIn";
 
-
-function Home (){
-
-    const navigate = useNavigate();
-    const [movies, setMovies] = useState([]);
+export default function Home() {
+  const navigate = useNavigate();
+  const [movies, setMovies] = useState([]);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:5000/movies")
       .then((res) => res.json())
-      .then((data) => setMovies(data))
-      .catch((error) => console.error("Error fetching data:", error));
+      .then(setMovies)
+      .catch(console.error);
   }, []);
 
-    return (
-        <div className="bg-[#0d0d11] grid  h-fit w-full">
-            <div>
-                <Navbar />
-            </div>
-            <div> 
-                <Carousel />
-            </div>
-            <div className="h-2 bg-slate-400 w-full"></div>
-            <div className="flex h-fit justify-between">
-            <h3 className="text-white flex items-center mx-8 my-2  text-xl">
-              Recommended{" "}
-            </h3>
-            <button onClick={() => navigate("/movielist")} className="text-white flex items-center mr-20 hover:cursor-pointer">
-              See All{" "}
-              <div className="text-[#EF233C] flex items-center text-[2rem] font-light hover:cursor-pointer">
-                <MdKeyboardDoubleArrowRight  />
-              </div>
-            </button>
-            </div>
-            <div className=" flex justify-center w-[100%] mt-2 mb-5">
-            <div className="flex flex-wrap gap-4 justify-center bg-[#111e2c] py-3 px-2 rounded-3xl w-fit ">
-                {movies.slice(0,5).map((movie) => (
-                 <Card
-                    key={movie.id}
-                    tmdb_id={movie.tmdb_id}
-                    date={movie.release_date}          
-                    image={movie.poster_url}        
-                    rating={movie.rating}
-                    likes={movie.likes}
-                    price={movie.price}                     
-                  />
-               ))}
-            </div>
-            </div>
-            <div>
-                <div className="mx-10 my-5 rounded-3xl bg-white/40 h-[100px]" >
-                </div>
-            </div>
-            <div>
-            <div className="flex h-fit justify-between mb-5">
-                 <h3 className="text-white flex items-center mx-8 my-2  text-xl">
-                  Fan Favoutite Catagories
-                  </h3>
-            </div>
-            <div>
-                <div className=" flex justify-center w-[100%] mt-2 mb-5">
-                    <div className="flex flex-wrap gap-4 justify-center bg-[#f0e0c9] py-3 px-2 rounded-3xl w-fit ">
-                      {fanfav.map(item => (
-  <FavCard key={item.id} imageURL={item.imageURL} category={item.category} />
-))}
-                    </div>
-                </div>
-            </div>
-            </div>
-            <div className="flex h-fit justify-between mb-5">
-            <h3 className="text-white flex items-center mx-8 my-2  text-xl">
-             Open Air Fan parks
-            </h3>
-            <h4 className="text-white flex items-center mr-20 hover:cursor-pointer">
-              See All{" "}
-              <div className="text-[#EF233C] flex items-center text-[2rem] font-light hover:cursor-pointer">
-                <MdKeyboardDoubleArrowRight />
-              </div>
-            </h4> 
-            </div>
-             <div>
-                <div className=" flex justify-center w-[100%] mt-2 mb-5">
-                    <div className="flex flex-wrap gap-4 justify-center bg-[#efebce] py-3 px-2 rounded-3xl w-fit ">
-                      {/* <OpenAirCard/> <OpenAirCard/><OpenAirCard/> <OpenAirCard/> <OpenAirCard/> */}
-                      {OpenAir.map((air)=>(
-                        <OpenAirCard
-                         key={air.id}
-                        text={air.text}
-                        imageURL={air.imageURL}                       
-                        />
-                      ))}
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div className="h-2 bg-[#292f39] w-full"></div>
-                <Footer />
-            </div>
-            </div>
-    )
-};
+  // When the modal is open: blur + block interactions behind it
+  const bgClasses = isLoginOpen
+    ? "blur-[2px] scale-[.998] pointer-events-none select-none"
+    : "";
 
-export default Home; 
+  return (
+    <div className="relative min-h-screen w-full bg-[#0d0d11]">
+      {/* Background stays visible & dynamic */}
+      <div className={`transition-all duration-150 ${bgClasses}`} inert={isLoginOpen ? "" : undefined}>
+        <Navbar onLoginClick={() => setIsLoginOpen(true)} />
+
+        {/* Hero / carousel */}
+        <Carousel />
+
+        {/* Divider */}
+        <div className="h-2 w-full bg-slate-400" />
+
+        {/* Recommended */}
+        <section className="flex h-fit justify-between">
+          <h3 className="mx-8 my-2 text-xl text-white">Recommended</h3>
+          <button
+            onClick={() => navigate("/movielist")}
+            className="mr-20 flex items-center gap-1 text-white"
+          >
+            See All
+            <span className="flex items-center text-[2rem] font-light text-[#EF233C]">
+              <MdKeyboardDoubleArrowRight />
+            </span>
+          </button>
+        </section>
+
+        <div className="mt-2 mb-5 flex w-full justify-center">
+          <div className="w-fit rounded-3xl bg-[#111e2c] px-2 py-3">
+            <div className="flex flex-wrap justify-center gap-4">
+              {movies.slice(0, 5).map((movie) => (
+                <Card
+                  key={movie.id}
+                  tmdb_id={movie.tmdb_id}
+                  date={movie.release_date}
+                  image={movie.poster_url}
+                  rating={movie.rating}
+                  likes={movie.likes}
+                  price={movie.price}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Fan favourites */}
+        <section>
+          <div className="mb-2 flex h-fit justify-between">
+            <h3 className="mx-8 my-2 text-xl text-white">Fan Favourite Categories</h3>
+          </div>
+
+          <div className="mt-2 mb-5 flex w-full justify-center">
+            <div className="w-fit rounded-3xl bg-[#f0e0c9] px-2 py-3">
+              <div className="flex flex-wrap justify-center gap-4">
+                {fanfav.map((item) => (
+                  <FavCard key={item.id} imageURL={item.imageURL} category={item.category} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Open Air Fan parks */}
+        <section>
+          <div className="mb-5 flex h-fit justify-between">
+            <h3 className="mx-8 my-2 text-xl text-white">Open Air Fan Parks</h3>
+            <button className="mr-20 flex items-center gap-1 text-white">
+              See All
+              <span className="flex items-center text-[2rem] font-light text-[#EF233C]">
+                <MdKeyboardDoubleArrowRight />
+              </span>
+            </button>
+          </div>
+
+          <div className="mt-2 mb-5 flex w-full justify-center">
+            <div className="w-fit rounded-3xl bg-[#efebce] px-2 py-3">
+              <div className="flex flex-wrap justify-center gap-4">
+                {OpenAir.map((o) => (
+                  <OpenAirCard key={o.id} text={o.text} imageURL={o.imageURL} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <div className="h-2 w-full bg-[#292f39]" />
+        <Footer />
+      </div>
+
+      {/* Login Modal on top */}
+      <Modal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)}>
+        <LogIn onClose={() => setIsLoginOpen(false)} />
+      </Modal>
+    </div>
+  );
+}
