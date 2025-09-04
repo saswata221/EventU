@@ -1,29 +1,12 @@
-// server/controllers/searchController.js
 const pool = require("../config/db");
 
-/**
- * Build a safe pattern for ILIKE '%q%' (escape % and _ so they are literal)
- */
 const makeLike = (q) =>
   `%${String(q).replace(/%/g, "\\%").replace(/_/g, "\\_")}%`;
 
-/**
- * GET /search?q=...
- * Unified search across:
- *  - Movies  (public.current_movies): title + casts[]
- *  - Events  (public.events):        title + artist_names[]
- *
- * Returns the TOP 3 results by rating (desc), keeping the shape your UI expects:
- *  [{ tmdb_id, title, poster_url, casts, rating, type }]
- *  - type: "movie" | "event" (used by the frontend to route and handle posters)
- *  - poster_url:
- *      * movies: TMDB path (your UI prepends TMDB base)
- *      * events: full URL (frontend uses directly)
- */
 exports.unifiedSearch = async (req, res) => {
   try {
     const q = (req.query.q || "").trim();
-    if (q.length < 2) return res.json([]); // same UX as before
+    if (q.length < 2) return res.json([]);
 
     const like = makeLike(q);
 
@@ -74,7 +57,6 @@ exports.unifiedSearch = async (req, res) => {
 
     const { rows } = await pool.query(sql, [like]);
 
-    // Normalize to exactly what the frontend expects
     const out = rows.map((r) => ({
       tmdb_id: Number(r.tmdb_id),
       title: r.title || "",
