@@ -44,6 +44,28 @@ class EventController {
     }
   }
 
+  // 🔹 NEW: random hall
+  static async getRandomHall(req, res) {
+    try {
+      const { id } = req.params;
+      if (!/^\d+$/.test(id)) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid event ID" });
+      }
+      const hall = await Event.getRandomHall(Number(id));
+      if (!hall) {
+        return res
+          .status(404)
+          .json({ success: false, message: "No halls found" });
+      }
+      res.status(200).json({ success: true, data: hall });
+    } catch (error) {
+      console.error("getRandomHall error:", error);
+      res.status(500).json({ success: false, message: "Failed to fetch hall" });
+    }
+  }
+
   static async createEvent(req, res) {
     try {
       const required = [

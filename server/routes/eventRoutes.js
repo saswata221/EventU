@@ -1,4 +1,3 @@
-// server/routes/eventRoutes.js
 const express = require("express");
 const router = express.Router();
 
@@ -9,6 +8,9 @@ const requireRole = require("../middleware/requireRole");
 // Public browse
 router.get("/", EventController.getAllEvents);
 router.get("/:id", EventController.getEventById);
+
+// 🔹 NEW: get a random hall for this event
+router.get("/:id/random-hall", EventController.getRandomHall);
 
 // Manager or Admin can mutate
 router.post(

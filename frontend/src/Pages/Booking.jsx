@@ -249,10 +249,11 @@ export default function Booking() {
               <Timings
                 key={th.id}
                 theatreName={th.name}
-                slots={th.showtimes}
+               slots={Array.isArray(th.showtimes) ? th.showtimes : []}
+
                 format={fmt}
                 // pass all theatre times for seat page (for the left column)
-                onProceed={(iso) => onProceed(th.id, th.name, iso, th.showtimes)}
+                onProceed={(iso) => onProceed(th.id, th.name, iso, th.showtimes)} 
               />
             ))
           }
@@ -262,7 +263,7 @@ export default function Booking() {
             <Timings
               key={data.hall.id}
               theatreName={data.hall.name}
-              slots={data.hall.showtimes}
+              slots={Array.isArray(data.hall?.showtimes) ? data.hall.showtimes : []}
               format={fmt}
               onProceed={(iso) => onProceed(data.hall.id, data.hall.name, iso, data.hall.showtimes)}
             />
