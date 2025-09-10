@@ -25,7 +25,7 @@ export default function Timings({ theatreName, slots = [], format, onProceed }) 
 
       {/* Middle: time slots */}
       <div className="flex flex-wrap items-center gap-2 py-2 px-3">
-        {slots && slots.length > 0 ? (
+        {Array.isArray(slots) && slots.length > 0 ? (
           slots.map((iso, idx) => {
             const active = selectedIso === iso;
             return (

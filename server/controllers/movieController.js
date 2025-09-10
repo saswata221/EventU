@@ -27,6 +27,11 @@ exports.getAllMovies = async (req, res) => {
   }
 };
 
+exports.getMovie = async (req, res) => {
+  try {
+  } catch {}
+};
+
 // Get movie by ID
 exports.getMovieById = async (req, res) => {
   const id = parseInt(req.params.id);

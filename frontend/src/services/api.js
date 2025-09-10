@@ -73,5 +73,8 @@ api.interceptors.response.use(
     throw err;
   }
 );
+export function getRandomHall(eventId) {
+  return api.get(`/api/events/${eventId}/random-hall`);
+}
 
 export default api;

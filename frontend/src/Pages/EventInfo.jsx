@@ -2,7 +2,7 @@
 // Detailed infos of the events except Movies will show here..
 
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Navbar from "../Components/JsCompo/Navbar";
 import Footer from "../Components/JsCompo/Footer";
 import comedyLadder from "../Components/Images/comedyLadder.jpg";
@@ -13,13 +13,14 @@ import { FaLanguage } from "react-icons/fa6";
 import { GoPeople } from "react-icons/go";
 import { MdOutlineTheaterComedy } from "react-icons/md";
 import { PiClockUserBold } from "react-icons/pi";
+import BookingModal from "../Components/JsCompo/BookingModal";
 
 function EventInfo() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -67,14 +68,11 @@ function EventInfo() {
     return `${hours} hours`;
   };
 
-  const handleProceedToBookings = () => navigate(`/bookings/${id}`);
-
   // ---- Helpers: parse Postgres array strings like "{a,b}" into JS arrays ----
   const parsePgArray = (val) => {
     if (!val) return [];
     if (Array.isArray(val)) return val.map((s) => String(s).trim()).filter(Boolean);
     if (typeof val === "string") {
-      // remove surrounding { } then split by comma, strip quotes/spaces
       return val
         .trim()
         .replace(/^{|}$/g, "")
@@ -87,9 +85,8 @@ function EventInfo() {
 
   const isImageUrl = (url) =>
     typeof url === "string" &&
-    /\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i.test(url.trim());
+    /\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i.test(url?.trim());
 
-  // Build pairs index-wise so name[i] -> image[i]
   const buildArtistPairs = (namesVal, imagesVal) => {
     const names = parsePgArray(namesVal);
     const images = parsePgArray(imagesVal).map((u) => (isImageUrl(u) ? u : null));
@@ -141,9 +138,6 @@ function EventInfo() {
       <div className="bg-[#1A1A2E] p-10 text-white">
         <div className="flex justify-between items-center">
           <p className="text-3xl font-inria text-[#E8D8E0]">{event.title}</p>
-          <div className="text-3xl rounded-full p-2 hover:bg-pink-600/20 text-white cursor-pointer">
-            <MdOutlineShare />
-          </div>
         </div>
 
         <div className="flex py-4 gap-52">
@@ -151,7 +145,7 @@ function EventInfo() {
             <img
               src={event.image_url || comedyLadder}
               alt={event.title}
-              className="rounded-2xl w-[720px] h-[360px] object-cover "
+              className="rounded-2xl w-[720px] h-[360px] object-cover"
               onError={(e) => {
                 e.currentTarget.src = comedyLadder;
               }}
@@ -188,7 +182,7 @@ function EventInfo() {
             </div>
 
             <button
-              onClick={handleProceedToBookings}
+              onClick={() => setShowBookingModal(true)}
               className="bg-[#EF233C]/90 hover:bg-[#EF233C]/70 text-white p-2 rounded-lg m-5 cursor-pointer transition-colors duration-200"
             >
               Proceed To Bookings
@@ -213,14 +207,14 @@ function EventInfo() {
 
           <div>
             <p className="text-3xl font-inria pl-10 text-[#E8D8E0]">Artists</p>
-            <div className="p-3 flex flex-wrap ">
+            <div className="p-3 flex flex-wrap">
               {artistPairs.length > 0 ? (
                 artistPairs.map(({ name, img }, idx) => (
                   <div key={idx} className="text-center">
                     <img
                       src={img || comedyLadder}
                       alt={name}
-                      className="h-32 w-32 mx-6 rounded-full object-cover shadow-lg "
+                      className="h-32 w-32 mx-6 rounded-full object-cover shadow-lg"
                       onError={(e) => {
                         e.currentTarget.src = comedyLadder;
                       }}
@@ -239,6 +233,12 @@ function EventInfo() {
           </div>
         </div>
       </div>
+
+      {/* Two-step booking modal on this page */}
+      {showBookingModal && (
+        <BookingModal event={event} onClose={() => setShowBookingModal(false)} />
+      )}
+
       <Footer />
     </div>
   );

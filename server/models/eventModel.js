@@ -39,28 +39,28 @@ class Event {
   // Get event by ID
   static async getEventById(id) {
     const query = `
-    SELECT
-      id,
-      title,
-      description,
-      image_url,
-      image_url AS poster_url,   -- 👈 alias added
-      price_from::float AS price_from,
-      start_date,
-      end_date,
-      languages,
-      age_limit,
-      duration_hours::float AS duration_hours,
-      category,
-      venue,
-      artist_names,
-      artist_images,
-      status,
-      created_at,
-      updated_at
-    FROM events
-    WHERE id = $1 AND status = 'active'
-  `;
+      SELECT
+        id,
+        title,
+        description,
+        image_url,
+        poster_url,                     -- ← use the column, not alias
+        price_from::float AS price_from,
+        start_date,
+        end_date,
+        languages,
+        age_limit,
+        duration_hours::float AS duration_hours,
+        category,
+        venue,
+        artist_names,
+        artist_images,
+        status,
+        created_at,
+        updated_at
+      FROM events
+      WHERE id = $1 AND status = 'active'
+    `;
     const result = await db.query(query, [id]);
     return result.rows[0] || null;
   }
@@ -179,6 +179,19 @@ class Event {
       `UPDATE events SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING id`,
       [id]
     );
+    return result.rows[0] || null;
+  }
+
+  // 🔹 NEW: pick a random hall for the event
+  static async getRandomHall(eventId) {
+    const query = `
+      SELECT id, event_id, name, location
+      FROM event_halls
+      WHERE event_id = $1
+      ORDER BY random()
+      LIMIT 1
+    `;
+    const result = await db.query(query, [eventId]);
     return result.rows[0] || null;
   }
 }

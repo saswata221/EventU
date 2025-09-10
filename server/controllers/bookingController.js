@@ -11,6 +11,7 @@ function timeRangeToSql(range) {
     case "evening":
       return { start: 16, end: 20 };
     case "night":
+      // handled specially in SQL (>=20 OR <6)
       return { start: 20, end: 24 };
     default:
       return null;
@@ -18,40 +19,75 @@ function timeRangeToSql(range) {
 }
 
 // GET /booking/:id
+// id = movie tmdb_id (string) OR event id (number)
 exports.getBookingData = async (req, res) => {
-  const { id } = req.params; // movie tmdb_id OR numeric event id
+  const { id } = req.params;
   const { date, timeRange } = req.query;
 
+  // default to today (local YYYY-MM-DD)
   const dateStr = date || new Date().toISOString().slice(0, 10);
   const range = timeRangeToSql(timeRange);
 
   try {
     const asNum = Number(id);
+
+    // ---------- EVENT BRANCH (numeric id) ----------
     if (!Number.isNaN(asNum)) {
-      // EVENT
       const eQ = `SELECT id, title FROM events WHERE id = $1 LIMIT 1;`;
       const eRes = await pool.query(eQ, [asNum]);
 
       if (eRes.rows.length) {
         const event = eRes.rows[0];
-        const hallQ = `SELECT id, name FROM event_halls WHERE event_id = $1 LIMIT 1;`;
-        const hallRes = await pool.query(hallQ, [event.id]);
+
+        // Pick ONE random hall that actually has at least one matching showtime
+        let hallPickSql = `
+          SELECT h.id, h.name
+          FROM event_halls h
+          WHERE h.event_id = $1
+            AND EXISTS (
+              SELECT 1
+              FROM event_showtimes es
+              WHERE es.hall_id = h.id
+                AND DATE(es.show_time) = $2
+        `;
+        const hallPickParams = [event.id, dateStr];
+
+        if (range) {
+          if (timeRange === "night") {
+            hallPickSql += ` AND (EXTRACT(HOUR FROM es.show_time) >= 20 OR EXTRACT(HOUR FROM es.show_time) < 6)`;
+          } else {
+            hallPickSql += ` AND EXTRACT(HOUR FROM es.show_time) >= $3 AND EXTRACT(HOUR FROM es.show_time) < $4`;
+            hallPickParams.push(range.start, range.end);
+          }
+        }
+        hallPickSql += `) ORDER BY random() LIMIT 1;`;
+
+        const hallRes = await pool.query(hallPickSql, hallPickParams);
 
         let hall = null;
         if (hallRes.rows.length) {
           const h = hallRes.rows[0];
-          let stQ = `SELECT show_time FROM event_showtimes WHERE hall_id = $1 AND DATE(show_time) = $2`;
-          const params = [h.id, dateStr];
+
+          // Now fetch the actual showtimes for THAT hall for the same date/filter
+          let stQ = `
+            SELECT show_time
+            FROM event_showtimes
+            WHERE hall_id = $1
+              AND DATE(show_time) = $2
+          `;
+          const stParams = [h.id, dateStr];
+
           if (range) {
             if (timeRange === "night") {
               stQ += ` AND (EXTRACT(HOUR FROM show_time) >= 20 OR EXTRACT(HOUR FROM show_time) < 6)`;
             } else {
               stQ += ` AND EXTRACT(HOUR FROM show_time) >= $3 AND EXTRACT(HOUR FROM show_time) < $4`;
-              params.push(range.start, range.end);
+              stParams.push(range.start, range.end);
             }
           }
+
           stQ += ` ORDER BY show_time ASC`;
-          const stRes = await pool.query(stQ, params);
+          const stRes = await pool.query(stQ, stParams);
 
           hall = {
             id: h.id,
@@ -64,14 +100,19 @@ exports.getBookingData = async (req, res) => {
           type: "event",
           id: event.id,
           title: event.title,
-          hall,
+          hall, // single random hall (or null if no matching hall/showtimes)
           date: dateStr,
         });
       }
     }
 
-    // MOVIE
-    const mQ = `SELECT id, tmdb_id, title, duration, is_adult, genres FROM current_movies WHERE tmdb_id = $1 LIMIT 1;`;
+    // ---------- MOVIE BRANCH (tmdb_id string) ----------
+    const mQ = `
+      SELECT id, tmdb_id, title, duration, is_adult, genres
+      FROM current_movies
+      WHERE tmdb_id = $1
+      LIMIT 1;
+    `;
     const mRes = await pool.query(mQ, [id]);
 
     if (!mRes.rows.length) {
@@ -79,11 +120,14 @@ exports.getBookingData = async (req, res) => {
     }
     const m = mRes.rows[0];
 
+    // Gather theatres with showtimes for the date/filter
     let thQ = `
-      SELECT t.id, t.name,
+      SELECT
+        t.id,
+        t.name,
         COALESCE(
           JSON_AGG(ts.show_time ORDER BY ts.show_time) FILTER (WHERE ts.id IS NOT NULL),
-          '[]'
+          '[]'::json
         ) AS showtimes
       FROM theatres t
       LEFT JOIN theatre_showtimes ts
