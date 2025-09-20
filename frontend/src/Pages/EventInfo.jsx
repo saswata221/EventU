@@ -58,7 +58,9 @@ function EventInfo() {
   };
 
   const formatLanguages = (languages) =>
-    !languages || languages.length === 0 ? "Not specified" : languages.join(", ");
+    !languages || languages.length === 0
+      ? "Not specified"
+      : languages.join(", ");
 
   const formatDuration = (hours) => {
     if (!hours) return "Not specified";
@@ -71,7 +73,8 @@ function EventInfo() {
   // ---- Helpers: parse Postgres array strings like "{a,b}" into JS arrays ----
   const parsePgArray = (val) => {
     if (!val) return [];
-    if (Array.isArray(val)) return val.map((s) => String(s).trim()).filter(Boolean);
+    if (Array.isArray(val))
+      return val.map((s) => String(s).trim()).filter(Boolean);
     if (typeof val === "string") {
       return val
         .trim()
@@ -89,7 +92,9 @@ function EventInfo() {
 
   const buildArtistPairs = (namesVal, imagesVal) => {
     const names = parsePgArray(namesVal);
-    const images = parsePgArray(imagesVal).map((u) => (isImageUrl(u) ? u : null));
+    const images = parsePgArray(imagesVal).map((u) =>
+      isImageUrl(u) ? u : null
+    );
     const n = Math.max(names.length, images.length);
     const pairs = [];
     for (let i = 0; i < n; i++) {
@@ -153,9 +158,9 @@ function EventInfo() {
           </div>
 
           <div className="text-center">
-            <div className="flex gap-2 items-centered justify-center font-inria text-[#E8D8E0]">
+            <div className="flex gap-2 items-centered justify-center items-center font-inria text-[#E8D8E0]">
               <FaIndianRupeeSign />
-              <p className="text-lg">{event.price_from} onwards</p>
+              <p className="text-lg ">{event.price_from} onwards</p>
             </div>
 
             <div className="border border-gray-700 rounded-xl p-5 bg-slate-800">
@@ -169,7 +174,8 @@ function EventInfo() {
               </div>
               <div className="gap-3 p-1 flex items-center text-orange-300">
                 <GoPeople className="text-2xl font-semibold" />
-                Age Limit - {event.age_limit ? `${event.age_limit}+` : "Not specified"}
+                Age Limit -{" "}
+                {event.age_limit ? `${event.age_limit}+` : "Not specified"}
               </div>
               <div className="gap-3 p-1 flex items-center text-purple-300">
                 <PiClockUserBold className="text-2xl font-semibold" />
@@ -192,7 +198,9 @@ function EventInfo() {
 
         <div className="flex">
           <div className="w-1/2 pr-5">
-            <p className="text-3xl font-inria text-[#E8D8E0]">About The Event</p>
+            <p className="text-3xl font-inria text-[#E8D8E0]">
+              About The Event
+            </p>
             <p className="py-3 text-gray-200">
               {event.description || "No description available for this event."}
             </p>
@@ -226,7 +234,9 @@ function EventInfo() {
                 ))
               ) : (
                 <div className="text-center w-full">
-                  <p className="text-gray-400">No artists information available</p>
+                  <p className="text-gray-400">
+                    No artists information available
+                  </p>
                 </div>
               )}
             </div>
@@ -236,7 +246,10 @@ function EventInfo() {
 
       {/* Two-step booking modal on this page */}
       {showBookingModal && (
-        <BookingModal event={event} onClose={() => setShowBookingModal(false)} />
+        <BookingModal
+          event={event}
+          onClose={() => setShowBookingModal(false)}
+        />
       )}
 
       <Footer />
