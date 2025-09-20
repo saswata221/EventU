@@ -13,7 +13,8 @@ function format12h(hhmm) {
 }
 
 function ordinal(n) {
-  const s = ["th", "st", "nd", "rd"], v = n % 100;
+  const s = ["th", "st", "nd", "rd"],
+    v = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
@@ -78,7 +79,6 @@ export default function BookingModal({ event, onClose }) {
       setStep(2);
       return;
     }
-    // Final: go to payments page (no details passed)
     onClose?.();
     navigate("/payment");
   }
@@ -89,16 +89,17 @@ export default function BookingModal({ event, onClose }) {
         {/* STEP 1 */}
         {step === 1 && (
           <>
-            <h2 id="booking-title" className="text-xl font-semibold mb-4 text-[#EF233C]">
+            <h2
+              id="booking-title"
+              className="text-xl font-semibold mb-4 text-[#EF233C]"
+            >
               Select your options
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {/* Date */}
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Dates
-                </label>
+                <label className="block text-sm font-medium mb-2">Dates</label>
                 <select
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
@@ -178,21 +179,42 @@ export default function BookingModal({ event, onClose }) {
                 onError={(e) => (e.currentTarget.style.display = "none")}
               />
               <div className="flex-1">
-                <p className="text-lg font-semibold font-kufam text-[#EF233c]">{event?.title}</p>
+                <p className="text-lg font-semibold font-kufam text-[#EF233c]">
+                  {event?.title}
+                </p>
                 <div className="mt-2 space-y-1 text-sm">
-                  <p className="font-semibold"><span className="font-medium text-green-600">Date:</span> {days.find(d => d.iso === date)?.label || date}</p>
-                  <p className="font-semibold"><span className="font-medium text-green-600">Time:</span> {format12h(time)}</p>
-                  <p className="font-semibold"><span className="font-medium text-green-600">Venue:</span> {event?.venue || "—"}</p>
-                  <p className="font-semibold"><span className="font-medium text-green-600">Seats:</span> {seats.join(", ")}</p>
+                  <p className="font-semibold">
+                    <span className="font-medium text-green-600">Date:</span>{" "}
+                    {days.find((d) => d.iso === date)?.label || date}
+                  </p>
+                  <p className="font-semibold">
+                    <span className="font-medium text-green-600">Time:</span>{" "}
+                    {format12h(time)}
+                  </p>
+                  <p className="font-semibold">
+                    <span className="font-medium text-green-600">Venue:</span>{" "}
+                    {event?.venue || "—"}
+                  </p>
+                  <p className="font-semibold">
+                    <span className="font-medium text-green-600">Seats:</span>{" "}
+                    {seats.join(", ")}
+                  </p>
                 </div>
 
                 <div className="mt-4 p-3 rounded-lg bg-gray-50 border">
                   <p className="text-sm text-green-600">
-                    Price: <span className="font-semibold text-black">₹{event?.price_from}</span> ×{" "}
-                    <span className="font-semibold text-[#EF233c]">{seatCount}</span>
+                    Price:{" "}
+                    <span className="font-semibold text-black">
+                      ₹{event?.price_from}
+                    </span>{" "}
+                    ×{" "}
+                    <span className="font-semibold text-[#EF233c]">
+                      {seatCount}
+                    </span>
                   </p>
                   <p className="text-base font-semibold mt-1">
-                     <span className="text-green-600">Total:</span>{" "} ₹ {" "}{(event?.price_from || 0) * seatCount}
+                    <span className="text-green-600">Total:</span> ₹{" "}
+                    {(event?.price_from || 0) * seatCount}
                   </p>
                 </div>
               </div>
