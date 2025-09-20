@@ -8,6 +8,7 @@ import Timings from "../Components/JsCompo/Timings";
 import PriceRangeDropdown from "../Components/JsCompo/PDropDown";
 import TimeDropdown from "../Components/JsCompo/PTimeDrop";
 import { useAuth } from "../context/AuthContext";
+import Loader from "../Components/JsCompo/Loader"; // 🔹 Spinner loader
 
 // --- helpers ---
 function asHrMin(totalMinutes) {
@@ -18,7 +19,10 @@ function asHrMin(totalMinutes) {
 }
 function fmt(ts) {
   try {
-    return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return new Date(ts).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   } catch {
     return ts;
   }
@@ -93,7 +97,8 @@ export default function Booking() {
             `http://localhost:5000/movies/${movieJson.tmdb_id || id}`
           );
           const details = await detailsRes.json();
-          movieJson.poster_url = movieJson.poster_url || details?.poster_url || "";
+          movieJson.poster_url =
+            movieJson.poster_url || details?.poster_url || "";
           movieJson.duration = movieJson.duration ?? details?.duration ?? null;
           movieJson.title = movieJson.title || details?.title || "";
         } catch {
@@ -129,10 +134,10 @@ export default function Booking() {
           title: data?.title || "",
           placeId,
           placeName,
-          showTime: selectedDisplay,   // human display e.g. "07:30 PM"
-          showTimeISO: isoTime,        // raw ISO if needed later
+          showTime: selectedDisplay, // human display e.g. "07:30 PM"
+          showTimeISO: isoTime, // raw ISO if needed later
           date: selectedDate,
-          times: timesDisplay,         // all times for this hall (display format)
+          times: timesDisplay, // all times for this hall (display format)
         },
       });
     } else {
@@ -143,7 +148,7 @@ export default function Booking() {
             movieId: data?.id || null,
             tmdb_id: data?.tmdb_id || id,
             title: data?.title || "",
-            poster: data?.poster_url || "",   // ensure poster is passed
+            poster: data?.poster_url || "", // ensure poster is passed
             duration: data?.duration || null, // ensure duration is passed
             placeId,
             placeName,
@@ -164,7 +169,9 @@ export default function Booking() {
       {/* Title and Details Section */}
       <div className="bg-white py-4 px-10">
         {loading ? (
-          <h1 className="text-3xl">Loading...</h1>
+          <div className="flex items-center justify-center h-[30vh]">
+            <Loader /> {/* 🔹 spinner loader */}
+          </div>
         ) : error || !data ? (
           <h1 className="text-2xl text-red-500">{error || "Data not found"}</h1>
         ) : (
@@ -173,24 +180,26 @@ export default function Booking() {
             <div className="flex gap-3 pt-3">
               {isEvent ? (
                 <>
-                  <p className="border-solid border-2 border-[#EF233C]/50 px-2 hover:bg-[#E0EBFF] hover:cursor-pointer text-[#EF233C] font-semibold rounded-xl">
+                  <p className="border-solid border-2 border-[#EF233C]/50 px-2 text-[#EF233C] font-semibold rounded-xl">
                     {data.duration_hours
                       ? `${Math.floor(data.duration_hours)}hr ${Math.round(
-                          (data.duration_hours - Math.floor(data.duration_hours)) * 60
+                          (data.duration_hours -
+                            Math.floor(data.duration_hours)) *
+                            60
                         )}min`
                       : "Duration not specified"}
                   </p>
-                  <p className="border-solid border-2 border-black/30 px-2 hover:bg-[#E0EBFF] hover:cursor-pointer hover:border-solid hover:border-[#81a0da] rounded-xl">
+                  <p className="border-solid border-2 border-black/30 px-2 rounded-xl">
                     {data.age_limit ? `${data.age_limit}+` : "All Ages"}
                   </p>
-                  <p className="border-solid border-2 border-black/30 px-2 hover:bg-[#E0EBFF] hover:cursor-pointer hover:border-solid hover:border-[#81a0da] rounded-xl">
+                  <p className="border-solid border-2 border-black/30 px-2 rounded-xl">
                     {data.category || "Event"}
                   </p>
                   {Array.isArray(data.languages) &&
                     data.languages.map((lang, i) => (
                       <p
                         key={i}
-                        className="border-solid border-2 border-black/30 px-2 hover:bg-[#E0EBFF] hover:cursor-pointer hover:border-solid hover:border-[#81a0da] rounded-xl"
+                        className="border-solid border-2 border-black/30 px-2 rounded-xl"
                       >
                         {lang}
                       </p>
@@ -198,17 +207,17 @@ export default function Booking() {
                 </>
               ) : (
                 <>
-                  <p className="border-solid border-2 border-[#EF233C]/50 px-2 hover:bg-[#E0EBFF] hover:cursor-pointer text-[#EF233C] font-semibold rounded-xl">
+                  <p className="border-solid border-2 border-[#EF233C]/50 px-2 text-[#EF233C] font-semibold rounded-xl">
                     {asHrMin(data.duration)}
                   </p>
-                  <p className="border-solid border-2 border-black/30 px-2 hover:bg-[#E0EBFF] hover:cursor-pointer hover:border-solid hover:border-[#81a0da] rounded-xl">
+                  <p className="border-solid border-2 border-black/30 px-2 rounded-xl">
                     {data.is_adult ? "18+" : "13+"}
                   </p>
                   {Array.isArray(data.genres) &&
                     data.genres.map((g, i) => (
                       <p
                         key={i}
-                        className="border-solid border-2 border-black/30 px-2 hover:bg-[#E0EBFF] hover:cursor-pointer hover:border-solid hover:border-[#81a0da] rounded-xl"
+                        className="border-solid border-2 border-black/30 px-2 rounded-xl"
                       >
                         {g}
                       </p>
@@ -221,60 +230,88 @@ export default function Booking() {
       </div>
 
       {/* Date and Filter Section */}
-      <div className="bg-[#E0EBFF] w-full h-fit border-t-2 border-black flex justify-between">
-        <div className="py-4 px-10 flex gap-4">
-          <DateCard selectedDate={selectedDate} onSelect={setSelectedDate} />
+      {!loading && !error && data && (
+        <div className="bg-[#E0EBFF] w-full h-fit border-t-2 border-black flex justify-between">
+          <div className="py-4 px-10 flex gap-4">
+            <DateCard selectedDate={selectedDate} onSelect={setSelectedDate} />
+          </div>
+          <div className="flex">
+            <p className="border-l-[1px] border-black h-full px-4 flex items-center text-[1.5rem]">
+              <PriceRangeDropdown onChange={setPriceFilter} />
+            </p>
+            <p className="border-l-[1px] border-black h-full px-4 flex items-center text-[1.5rem]">
+              <TimeDropdown onChange={setTimeFilter} />
+            </p>
+            <p className="border-l-[1px] border-black h-full px-4 flex items-center text-[1.5rem]">
+              {isEvent
+                ? Array.isArray(data?.languages)
+                  ? data.languages.join(", ")
+                  : "Language not specified"
+                : "Hindi-2D"}
+            </p>
+          </div>
         </div>
-        <div className="flex">
-          <p className="border-l-[1px] border-black h-full px-4 flex w-50 items-center text-[1.5rem]">
-            <PriceRangeDropdown onChange={setPriceFilter} />
-          </p>
-          <p className="border-l-[1px] border-black h-full px-4 flex w-70 items-center text-[1.5rem]">
-            <TimeDropdown onChange={setTimeFilter} />
-          </p>
-          <p className="border-l-[1px] border-black h-full px-4 flex w-40 items-center text-[1.5rem]">
-            {isEvent
-              ? (Array.isArray(data?.languages) ? data.languages.join(", ") : "Language not specified")
-              : "Hindi-2D"}
-          </p>
-        </div>
-      </div>
+      )}
 
-      {/* Timings and Theatres Section (centered vertical stack) */}
+      {/* Timings and Theatres Section */}
       <div className="bg-[#09101E] w-full h-fit">
         <div className="py-10 px-10 text-white space-y-3 flex flex-col items-center">
-          {/* Movies → multiple theatres */}
-          {!loading && !error && data && !isEvent && Array.isArray(data.theatres) && data.theatres.length > 0 &&
-            data.theatres.map((th) => (
-              <Timings
-                key={th.id}
-                theatreName={th.name}
-               slots={Array.isArray(th.showtimes) ? th.showtimes : []}
+          {loading ? (
+            <div className="flex items-center justify-center h-[40vh]">
+              <Loader /> {/* 🔹 centered loader while fetching timings */}
+            </div>
+          ) : !error && data ? (
+            <>
+              {/* Movies → multiple theatres */}
+              {!isEvent &&
+                Array.isArray(data.theatres) &&
+                data.theatres.length > 0 &&
+                data.theatres.map((th) => (
+                  <Timings
+                    key={th.id}
+                    theatreName={th.name}
+                    slots={Array.isArray(th.showtimes) ? th.showtimes : []}
+                    format={fmt}
+                    onProceed={(iso) =>
+                      onProceed(th.id, th.name, iso, th.showtimes)
+                    }
+                  />
+                ))}
 
-                format={fmt}
-                // pass all theatre times for seat page (for the left column)
-                onProceed={(iso) => onProceed(th.id, th.name, iso, th.showtimes)} 
-              />
-            ))
-          }
+              {/* Events → single hall */}
+              {isEvent && data.hall && (
+                <Timings
+                  key={data.hall.id}
+                  theatreName={data.hall.name}
+                  slots={
+                    Array.isArray(data.hall?.showtimes)
+                      ? data.hall.showtimes
+                      : []
+                  }
+                  format={fmt}
+                  onProceed={(iso) =>
+                    onProceed(
+                      data.hall.id,
+                      data.hall.name,
+                      iso,
+                      data.hall.showtimes
+                    )
+                  }
+                />
+              )}
 
-          {/* Events → single hall */}
-          {!loading && !error && data && isEvent && data.hall && (
-            <Timings
-              key={data.hall.id}
-              theatreName={data.hall.name}
-              slots={Array.isArray(data.hall?.showtimes) ? data.hall.showtimes : []}
-              format={fmt}
-              onProceed={(iso) => onProceed(data.hall.id, data.hall.name, iso, data.hall.showtimes)}
-            />
-          )}
-
-          {/* Empty state */}
-          {!loading && !error && data && (
-            ((isEvent && (!data.hall || !data.hall.showtimes?.length)) ||
-              (!isEvent && (!data.theatres || !data.theatres.some((t) => t.showtimes?.length)))) && (
-              <p className="text-slate-300">No timings for the selected filters/date.</p>
-            )
+              {/* Empty state */}
+              {(isEvent && (!data.hall || !data.hall.showtimes?.length)) ||
+              (!isEvent &&
+                (!data.theatres ||
+                  !data.theatres.some((t) => t.showtimes?.length))) ? (
+                <p className="text-slate-300">
+                  No timings for the selected filters/date.
+                </p>
+              ) : null}
+            </>
+          ) : (
+            <p className="text-red-400">{error}</p>
           )}
         </div>
 
@@ -283,9 +320,11 @@ export default function Booking() {
           <div className="w-fit text-center text-white">
             <h1 className="mb-2">Unable to find what you are looking for?</h1>
             <div className="flex justify-center">
-              <Link to={'/care'}><h1 className="bg-[#EF233C] w-fit py-1 px-6 flex justify-center rounded-sm cursor-pointer hover:bg-[#EF233C]/80">
-                Send Us a message
-              </h1></Link>
+              <Link to={"/care"}>
+                <h1 className="bg-[#EF233C] w-fit py-1 px-6 flex justify-center rounded-sm cursor-pointer hover:bg-[#EF233C]/80">
+                  Send Us a message
+                </h1>
+              </Link>
             </div>
           </div>
         </div>

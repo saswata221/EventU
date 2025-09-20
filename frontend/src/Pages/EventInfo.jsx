@@ -6,14 +6,12 @@ import { useParams } from "react-router-dom";
 import Navbar from "../Components/JsCompo/Navbar";
 import Footer from "../Components/JsCompo/Footer";
 import comedyLadder from "../Components/Images/comedyLadder.jpg";
-import { MdOutlineShare } from "react-icons/md";
-import { FaIndianRupeeSign } from "react-icons/fa6";
-import { FaCalendarDays } from "react-icons/fa6";
-import { FaLanguage } from "react-icons/fa6";
+import { FaIndianRupeeSign, FaCalendarDays, FaLanguage } from "react-icons/fa6";
 import { GoPeople } from "react-icons/go";
 import { MdOutlineTheaterComedy } from "react-icons/md";
 import { PiClockUserBold } from "react-icons/pi";
 import BookingModal from "../Components/JsCompo/BookingModal";
+import Loader from "../Components/JsCompo/Loader"; // 🔹 Spinner loader
 
 function EventInfo() {
   const { id } = useParams();
@@ -111,10 +109,8 @@ function EventInfo() {
     return (
       <div>
         <Navbar />
-        <div className="bg-gray-900 p-10 min-h-screen flex items-center justify-center">
-          <p className="text-2xl font-inria text-white animate-pulse">
-            Loading event details...
-          </p>
+        <div className="bg-[#1A1A2E] min-h-screen flex items-center justify-center">
+          <Loader /> {/* 🔹 Spinner loader centered */}
         </div>
         <Footer />
       </div>
@@ -125,7 +121,7 @@ function EventInfo() {
     return (
       <div>
         <Navbar />
-        <div className="bg-gray-900 p-10 min-h-screen flex items-center justify-center">
+        <div className="bg-[#1A1A2E] min-h-screen flex items-center justify-center">
           <p className="text-2xl font-inria text-red-500">
             {error || "Event not found"}
           </p>
@@ -158,7 +154,7 @@ function EventInfo() {
           </div>
 
           <div className="text-center">
-            <div className="flex gap-2 items-centered justify-center items-center font-inria text-[#E8D8E0]">
+            <div className="flex gap-2 items-center justify-center font-inria text-[#E8D8E0]">
               <FaIndianRupeeSign />
               <p className="text-lg ">{event.price_from} onwards</p>
             </div>
