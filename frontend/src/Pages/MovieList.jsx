@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../Components/JsCompo/Navbar";
 import Footer from "../Components/JsCompo/Footer";
 import Card from "../Components/JsCompo/Card";
+import Loader from "../Components/JsCompo/Loader"; // 🔹 Spinner loader
 
 function MovieList() {
   const [movies, setMovies] = useState([]);
@@ -13,8 +14,11 @@ function MovieList() {
   const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedRating, setSelectedRating] = useState("");
 
+  const [loading, setLoading] = useState(true); // 🔹 loading state
+
   // 🔹 Fetch movies whenever filters change
   useEffect(() => {
+    setLoading(true);
     let url = "http://localhost:5000/movies?";
     if (selectedGenre) url += `genre=${selectedGenre}&`;
     if (selectedRating) url += `rating=${selectedRating}&`;
@@ -22,13 +26,13 @@ function MovieList() {
     fetch(url)
       .then((res) => res.json())
       .then((data) => setMovies(data))
-      .catch((error) => console.error("Error fetching data:", error));
+      .catch((error) => console.error("Error fetching data:", error))
+      .finally(() => setLoading(false));
   }, [selectedGenre, selectedRating]);
 
   return (
     <div>
       <Navbar />
-      {/* ......... */}
       <div className="bg-[#130620] flex h-screen">
         {/* Sidebar Filters */}
         <div className="w-1/4 text-white p-8">
@@ -45,18 +49,25 @@ function MovieList() {
             {genreOpen && (
               <div className="w-full p-2 rounded-sm">
                 <ul className="flex flex-wrap gap-x-3 text-[#EF233C] gap-y-2 text-sm pl-2">
-                  {["Action", "Adventure", "Comedy", "Thriller", "Animation", "Family"].map(
-                    (g) => (
-                      <li
-                        key={g}
-                        onClick={() => setSelectedGenre(g)}
-                        className={`py-[2px] px-2 border border-slate-400 rounded-sm cursor-pointer 
-                          ${selectedGenre === g ? "bg-[#EF233C] text-white" : ""}`}
-                      >
-                        {g}
-                      </li>
-                    )
-                  )}
+                  {[
+                    "Action",
+                    "Adventure",
+                    "Comedy",
+                    "Thriller",
+                    "Animation",
+                    "Family",
+                  ].map((g) => (
+                    <li
+                      key={g}
+                      onClick={() => setSelectedGenre(g)}
+                      className={`py-[2px] px-2 border border-slate-400 rounded-sm cursor-pointer 
+                        ${
+                          selectedGenre === g ? "bg-[#EF233C] text-white" : ""
+                        }`}
+                    >
+                      {g}
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}
@@ -73,12 +84,14 @@ function MovieList() {
             {ratingOpen && (
               <div className="w-full p-2 rounded-sm">
                 <ul className="flex flex-wrap gap-x-3 text-[#EF233C] gap-y-2 text-sm pl-2">
-                  {[9,8,7,6,5, 4, 3].map((r) => (
+                  {[9, 8, 7, 6, 5, 4, 3].map((r) => (
                     <li
                       key={r}
                       onClick={() => setSelectedRating(r)}
                       className={`py-[2px] px-2 border border-slate-400 rounded-sm cursor-pointer 
-                        ${selectedRating === r ? "bg-[#EF233C] text-white" : ""}`}
+                        ${
+                          selectedRating === r ? "bg-[#EF233C] text-white" : ""
+                        }`}
                     >
                       {r}+
                     </li>
@@ -105,12 +118,18 @@ function MovieList() {
         {/* Movies Section */}
         <div className="text-white p-8 pr-0 w-3/4 overflow-y-auto h-screen scrollbar-hide">
           <div>
-            <p className="text-white text-2xl">Movie Shows In Kolkata</p>
-            <div className="flex flex-wrap ">
-              {movies.length === 0 ? (
-                <p className="text-gray-400">No movies found.</p>
-              ) : (
-                movies.map((movie) => (
+            <p className="text-white text-2xl mb-4">Movie Shows In Kolkata</p>
+
+            {loading ? (
+              // 🔹 Loader centered in the cards section
+              <div className="flex items-center justify-center h-[70vh]">
+                <Loader />
+              </div>
+            ) : movies.length === 0 ? (
+              <p className="text-gray-400">No movies found.</p>
+            ) : (
+              <div className="flex flex-wrap">
+                {movies.map((movie) => (
                   <Card
                     key={movie.id}
                     tmdb_id={movie.tmdb_id}
@@ -120,14 +139,12 @@ function MovieList() {
                     likes={movie.likes + "k"}
                     price={movie.price}
                   />
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* .......... */}
       <Footer />
     </div>
   );

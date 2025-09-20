@@ -11,14 +11,14 @@ const SeatSelection = () => {
 
   // Data passed from Booking.jsx → onProceed
   const {
-    title,           // movie title
-    poster,          // poster image url
-    duration,        // duration in minutes
-    showTime,        // display time user picked (e.g., "10:20 AM")
-    showTimeISO,     // raw ISO if needed
-    times = [],      // all display times for this theatre/hall (already formatted)
-    date,            // selected date
-    placeName,       // theatre name
+    title, // movie title
+    poster, // poster image url
+    duration, // duration in minutes
+    showTime, // display time user picked (e.g., "10:20 AM")
+    showTimeISO, // raw ISO if needed
+    times = [], // all display times for this theatre/hall (already formatted)
+    date, // selected date
+    placeName, // theatre name
   } = location.state || {};
 
   const [movieName, setMovieName] = useState(title || "Movie");
@@ -40,14 +40,16 @@ const SeatSelection = () => {
   // Seat sections
   const sections = [
     { type: "Platinum", price: 450, rows: 2, seatsPerRow: 12 },
-    { type: "Gold",     price: 350, rows: 3, seatsPerRow: 16 },
-    { type: "Silver",   price: 210, rows: 4, seatsPerRow: 20 },
+    { type: "Gold", price: 350, rows: 3, seatsPerRow: 16 },
+    { type: "Silver", price: 210, rows: 4, seatsPerRow: 20 },
   ];
 
   const handleSeatClick = (seatId) => {
     if (bookedSeats.includes(seatId)) return;
     setSelectedSeats((prev) =>
-      prev.includes(seatId) ? prev.filter((s) => s !== seatId) : [...prev, seatId]
+      prev.includes(seatId)
+        ? prev.filter((s) => s !== seatId)
+        : [...prev, seatId]
     );
   };
 
@@ -60,7 +62,9 @@ const SeatSelection = () => {
   let globalRowIndex = 0;
 
   // Available times (fallback)
-  const availableTimes = times.length ? times : ["10:20 AM", "01:20 PM", "05:55 PM", "09:35 PM"];
+  const availableTimes = times.length
+    ? times
+    : ["10:20 AM", "01:20 PM", "05:55 PM", "09:35 PM"];
 
   return (
     <div
@@ -77,7 +81,6 @@ const SeatSelection = () => {
       <div className="flex-1 px-4 md:px-6 py-4 ">
         <div className="mx-auto max-w-[1400px]">
           <div className="flex flex-col lg:flex-row items-start justify-center gap-6">
-
             {/* LEFT: movie + timings */}
             <aside className="w-fit shrink-0 sticky top-24 self-start">
               <h2 className="text-xl font-bold mb-3">{movieName}</h2>
@@ -122,29 +125,38 @@ const SeatSelection = () => {
                       globalRowIndex++;
 
                       return (
-                        <div key={rowLabel} className="flex items-center justify-center mb-1">
+                        <div
+                          key={rowLabel}
+                          className="flex items-center justify-center mb-1"
+                        >
                           <span className="w-6 font-bold">{rowLabel}</span>
 
                           <div className="flex">
-                            {Array.from({ length: section.seatsPerRow }).map((_, seatIndex) => {
-                              const seatNumber = seatIndex + 1;
-                              const seatId = `${section.type}-${rowLabel}-${seatNumber}`;
-                              const isBooked = bookedSeats.includes(seatId);
-                              const isSelected = selectedSeats.includes(seatId);
+                            {Array.from({ length: section.seatsPerRow }).map(
+                              (_, seatIndex) => {
+                                const seatNumber = seatIndex + 1;
+                                const seatId = `${section.type}-${rowLabel}-${seatNumber}`;
+                                const isBooked = bookedSeats.includes(seatId);
+                                const isSelected =
+                                  selectedSeats.includes(seatId);
 
-                              let aislePositions = [];
-                              if (section.type === "Silver") aislePositions = [5, 15];
-                              if (section.type === "Gold") aislePositions = [4, 12];
-                              if (section.type === "Platinum") aislePositions = [6];
+                                let aislePositions = [];
+                                if (section.type === "Silver")
+                                  aislePositions = [5, 15];
+                                if (section.type === "Gold")
+                                  aislePositions = [4, 12];
+                                if (section.type === "Platinum")
+                                  aislePositions = [6];
 
-                              const extraSpace = aislePositions.includes(seatNumber);
+                                const extraSpace =
+                                  aislePositions.includes(seatNumber);
 
-                              return (
-                                <React.Fragment key={seatIndex}>
-                                  <button
-                                    onClick={() => handleSeatClick(seatId)}
-                                    disabled={isBooked}
-                                    className={`w-6 h-6 m-0.5 rounded flex items-center justify-center border text-[10px]
+                                return (
+                                  <React.Fragment key={seatIndex}>
+                                    <button
+                                      onClick={() => handleSeatClick(seatId)}
+                                      disabled={isBooked}
+                                      className={`w-6 h-6 m-0.5 rounded flex items-center justify-center border text-[10px]
                                       ${
                                         isBooked
                                           ? "bg-orange-600 text-white font-bold cursor-not-allowed"
@@ -152,13 +164,14 @@ const SeatSelection = () => {
                                           ? "bg-green-500 text-white shadow-[0_0_8px_rgba(0,255,0,0.7)]"
                                           : "bg-gray-800 border-gray-600 hover:bg-gray-700"
                                       } transition-all duration-200`}
-                                  >
-                                    {seatNumber}
-                                  </button>
-                                  {extraSpace && <div className="w-6" />}
-                                </React.Fragment>
-                              );
-                            })}
+                                    >
+                                      {seatNumber}
+                                    </button>
+                                    {extraSpace && <div className="w-6" />}
+                                  </React.Fragment>
+                                );
+                              }
+                            )}
                           </div>
 
                           <span className="w-6 font-bold">{rowLabel}</span>
@@ -221,79 +234,93 @@ const SeatSelection = () => {
 
       {/* Modal popup */}
       {/* 🚀 POPUP MODAL START */}
-{showModal && (
-  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-    <div className="bg-white rounded-xl p-6 w-[90%] max-w-md shadow-lg text-black relative">
-      
-      {/* Close button */}
-      <button
-        onClick={() => setShowModal(false)}
-        className="absolute top-3 right-3 text-gray-500 hover:text-black"
-      >
-        ✕
-      </button>
+      {showModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-[90%] max-w-md shadow-lg text-black relative">
+            {/* Close button */}
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+            >
+              ✕
+            </button>
 
-      {/* Title + Info (no poster here) */}
-      <div className="flex justify-between">
-      <div className="w-1/2">
-      <div>
-        <h2 className="text-xl font-bold font-kufam">{title}</h2>
-        <p className="text-md text-green-600">
-          {duration ? `${Math.floor(duration/60)}h ${duration%60}m` : "—"}
-        </p>
-        <p className="text-md text-[#EF233C] flex items-center span-3">{placeName}<IoLocationSharp/></p>
-      </div>
+            {/* Title + Info (no poster here) */}
+            <div className="flex justify-between">
+              <div className="w-1/2">
+                <div>
+                  <h2 className="text-xl font-bold font-kufam">{title}</h2>
+                  <p className="text-md text-green-600">
+                    {duration
+                      ? `${Math.floor(duration / 60)}h ${duration % 60}m`
+                      : "—"}
+                  </p>
+                  <p className="text-md text-[#EF233C] flex items-center span-3">
+                    {placeName}
+                    <IoLocationSharp />
+                  </p>
+                </div>
 
-      {/* ShowTime + Date */}
-      <div className="mt-4">
-        <p><span className="font-semibold text-green-600">Date:</span> {date}</p>
-        <p><span className="font-semibold text-green-600">Time:</span> {showTime}</p>
-      </div>
+                {/* ShowTime + Date */}
+                <div className="mt-4">
+                  <p>
+                    <span className="font-semibold text-green-600">Date:</span>{" "}
+                    {date}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-green-600">Time:</span>{" "}
+                    {showTime}
+                  </p>
+                </div>
 
-      {/* Seats */}
-      <div className="mt-4">
-        <p className="font-semibold">Seats:</p>
-        {selectedSeats.length > 0 ? (
-          <ul className="flex flex-wrap gap-2 mt-1">
-            {selectedSeats.map((s) => (
-              <li key={s} className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm">
-                {s}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-gray-500">No seats selected</p>
-        )}
-      </div>
-      </div>
+                {/* Seats */}
+                <div className="mt-4">
+                  <p className="font-semibold">Seats:</p>
+                  {selectedSeats.length > 0 ? (
+                    <ul className="flex flex-wrap gap-2 mt-1">
+                      {selectedSeats.map((s) => (
+                        <li
+                          key={s}
+                          className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm"
+                        >
+                          {s}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-gray-500">No seats selected</p>
+                  )}
+                </div>
+              </div>
 
-      {/* Poster above payment button */}
-      {poster && (
-        <div className="mt-6 flex justify-end">
-          <img
-            src={poster}
-            alt="Movie Poster"
-            className="w-44 h-fit object-cover rounded-lg shadow"
-          />
+              {/* Poster above payment button */}
+              {poster && (
+                <div className="mt-6 flex justify-end">
+                  <img
+                    src={poster}
+                    alt="Movie Poster"
+                    className="w-44 h-fit object-cover rounded-lg shadow"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Total + Payment */}
+            <div className="mt-4 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-green-600">
+                Total: <span className="text-black"> ₹{totalPrice}</span>
+              </h3>
+              <button
+                onClick={() => (window.location.href = "/payment")}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                Proceed to Payment
+              </button>
+            </div>
+          </div>
         </div>
       )}
-      </div>
-
-      {/* Total + Payment */}
-      <div className="mt-4 flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-green-600">Total: <span className="text-black"> ₹{totalPrice}</span></h3>
-        <button
-          onClick={() => window.location.href="/payment"}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-        >
-          Proceed to Payment
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-{/* 🚀 POPUP MODAL END */}
-
+      {/* 🚀 POPUP MODAL END */}
 
       <Footer />
     </div>

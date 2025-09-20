@@ -1,14 +1,14 @@
 // All the events except Movies will be listed here....
 
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";  
+import { useLocation } from "react-router-dom";
 import Navbar from "../Components/JsCompo/Navbar";
 import Footer from "../Components/JsCompo/Footer";
 import Card from "../Components/JsCompo/Card";
+import Loader from "../Components/JsCompo/Loader"; // 🔹 Spinner loader
 
 function EventList() {
   const location = useLocation();
-
 
   const params = new URLSearchParams(location.search);
   const initialCategory = params.get("category") || "";
@@ -21,6 +21,8 @@ function EventList() {
   const [selectedGenre, setSelectedGenre] = useState(initialCategory);
   const [selectedRating, setSelectedRating] = useState(initialRating);
 
+  const [loading, setLoading] = useState(true); // 🔹 loading state
+
   // if URL query changes (e.g., navigating from FavCard), sync filters
   useEffect(() => {
     const p = new URLSearchParams(location.search);
@@ -30,6 +32,7 @@ function EventList() {
 
   // 🔹 Fetch events whenever filters change
   useEffect(() => {
+    setLoading(true);
     let url = "http://localhost:5000/api/events?";
     if (selectedGenre) url += `category=${encodeURIComponent(selectedGenre)}&`;
     if (selectedRating) url += `rating=${encodeURIComponent(selectedRating)}&`;
@@ -43,13 +46,13 @@ function EventList() {
           setEvents([]);
         }
       })
-      .catch((error) => console.error("Error fetching data:", error));
+      .catch((error) => console.error("Error fetching data:", error))
+      .finally(() => setLoading(false));
   }, [selectedGenre, selectedRating]);
 
   return (
     <div>
       <Navbar />
-      {/* ......... */}
       <div className="bg-[#130620] flex h-screen">
         {/* Sidebar Filters */}
         <div className="w-1/4 text-white p-8">
@@ -66,17 +69,24 @@ function EventList() {
             {genreOpen && (
               <div className="w-full p-2 rounded-sm">
                 <ul className="flex flex-wrap gap-x-3 text-[#EF233C] gap-y-2 text-sm pl-2">
-                  {["Comedy", "Music", "Magic Shows", "Kids", "Theatre Shows"].map((g) => (
-  <li
-    key={g}
-    onClick={() => setSelectedGenre(g)}
-    className={`py-[2px] px-2 border border-slate-400 rounded-sm cursor-pointer 
-      ${selectedGenre === g ? "bg-[#EF233C] text-white" : ""}`}
-  >
-    {g}
-  </li>
-))}
-
+                  {[
+                    "Comedy",
+                    "Music",
+                    "Magic Shows",
+                    "Kids",
+                    "Theatre Shows",
+                  ].map((g) => (
+                    <li
+                      key={g}
+                      onClick={() => setSelectedGenre(g)}
+                      className={`py-[2px] px-2 border border-slate-400 rounded-sm cursor-pointer 
+                        ${
+                          selectedGenre === g ? "bg-[#EF233C] text-white" : ""
+                        }`}
+                    >
+                      {g}
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}
@@ -98,7 +108,11 @@ function EventList() {
                       key={r}
                       onClick={() => setSelectedRating(String(r))}
                       className={`py-[2px] px-2 border border-slate-400 rounded-sm cursor-pointer 
-                        ${String(selectedRating) === String(r) ? "bg-[#EF233C] text-white" : ""}`}
+                        ${
+                          String(selectedRating) === String(r)
+                            ? "bg-[#EF233C] text-white"
+                            : ""
+                        }`}
                     >
                       {r}+
                     </li>
@@ -125,12 +139,18 @@ function EventList() {
         {/* Events Section */}
         <div className="text-white p-8 pr-0 w-3/4 overflow-y-auto h-screen scrollbar-hide">
           <div>
-            <p className="text-white text-2xl">Event Shows In Kolkata</p>
-            <div className="flex flex-wrap ">
-              {events.length === 0 ? (
-                <p className="text-gray-400">No events found.</p>
-              ) : (
-                events.map((event) => (
+            <p className="text-white text-2xl mb-4">Event Shows In Kolkata</p>
+
+            {loading ? (
+              // 🔹 Loader centered
+              <div className="flex items-center justify-center h-[70vh]">
+                <Loader />
+              </div>
+            ) : events.length === 0 ? (
+              <p className="text-gray-400">No events found.</p>
+            ) : (
+              <div className="flex flex-wrap">
+                {events.map((event) => (
                   <Card
                     key={event.id}
                     tmdb_id={event.id}
@@ -141,14 +161,12 @@ function EventList() {
                     price={event.price_from}
                     type="event"
                   />
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* .......... */}
       <Footer />
     </div>
   );
