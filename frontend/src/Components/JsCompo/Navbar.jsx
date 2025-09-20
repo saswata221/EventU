@@ -5,7 +5,7 @@ import { IoLocationSharp } from "react-icons/io5";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { FaRegUserCircle } from "react-icons/fa";
 import { TiThMenu } from "react-icons/ti";
-import { useAuth } from "../../context/AuthContext"; 
+import { useAuth } from "../../context/AuthContext";
 import Search from "./SearchBar";
 import { useMemo, useState } from "react";
 
@@ -41,15 +41,25 @@ function Navbar({ onLoginClick }) {
         <Search />
 
         <div className="flex items-center gap-10 pr-10 text-[1rem]">
-          <p className="flex items-center gap-1">
+          <p
+            className="flex items-center gap-1 cursor-not-allowed relative group text-gray-400"
+            title="Coming soon"
+          >
             <IoLocationSharp />
             Location
             <TiArrowSortedDown />
+            {/* Tooltip */}
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+              This feature is not yet available
+            </span>
           </p>
+
           <Link to="/event">
             <p>Events</p>
           </Link>
-          <p>Contact Us</p>
+          <Link to="/care">
+            <p>Contact Us</p>
+          </Link>
 
           {/* Auth area */}
           {!user ? (
@@ -63,7 +73,7 @@ function Navbar({ onLoginClick }) {
             <div className="relative">
               <button
                 onClick={() => setMenuOpen((s) => !s)}
-                className="flex items-center gap-2 rounded-3xl bg-white/10 px-3 py-1 hover:bg-white/15"
+                className="flex items-center gap-2 rounded-3xl bg-[#EF233C]/100 px-3 py-1 hover:bg-white/15"
               >
                 <FaRegUserCircle />
                 <span className="font-semibold">Hi, {firstName}</span>
@@ -97,7 +107,14 @@ function Navbar({ onLoginClick }) {
             </div>
           )}
 
-          <TiThMenu className="scale-150 cursor-pointer" />
+          <div className="relative group inline-block text-gray-400">
+            <TiThMenu className="scale-150 cursor-not-allowed" />
+
+            {/* Tooltip */}
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+              Coming Soon
+            </span>
+          </div>
         </div>
       </div>
 

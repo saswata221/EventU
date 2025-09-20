@@ -35,7 +35,10 @@ export default function Home() {
   return (
     <div className="relative min-h-screen w-full bg-[#0d0d11]">
       {/* Background stays visible & dynamic */}
-      <div className={`transition-all duration-150 ${bgClasses}`} inert={isLoginOpen ? "" : undefined}>
+      <div
+        className={`transition-all duration-150 ${bgClasses}`}
+        inert={isLoginOpen ? "" : undefined}
+      >
         <Navbar onLoginClick={() => setIsLoginOpen(true)} />
 
         {/* Hero / carousel */}
@@ -79,14 +82,20 @@ export default function Home() {
         {/* Fan favourites */}
         <section>
           <div className="mb-2 flex h-fit justify-between">
-            <h3 className="mx-8 my-2 text-xl text-white">Fan Favourite Categories</h3>
+            <h3 className="mx-8 my-2 text-xl text-white">
+              Fan Favourite Categories
+            </h3>
           </div>
 
           <div className="mt-2 mb-5 flex w-full justify-center">
             <div className="w-fit rounded-3xl bg-[#f0e0c9] px-2 py-3">
               <div className="flex flex-wrap justify-center gap-4">
                 {fanfav.map((item) => (
-                  <FavCard key={item.id} imageURL={item.imageURL} category={item.category} />
+                  <FavCard
+                    key={item.id}
+                    imageURL={item.imageURL}
+                    category={item.category}
+                  />
                 ))}
               </div>
             </div>
