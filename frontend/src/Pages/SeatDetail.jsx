@@ -9,7 +9,6 @@ const SeatSelection = () => {
   const { movieId } = useParams();
   const location = useLocation();
 
-  // Data passed from Booking.jsx → onProceed
   const {
     title, // movie title
     poster, // poster image url
@@ -20,6 +19,8 @@ const SeatSelection = () => {
     date, // selected date
     placeName, // theatre name
   } = location.state || {};
+
+  const MAX_SEATS = 8;
 
   const [movieName, setMovieName] = useState(title || "Movie");
   const [selectedTime, setSelectedTime] = useState(showTime || null);
@@ -32,12 +33,10 @@ const SeatSelection = () => {
 
   const [showModal, setShowModal] = useState(false);
 
-  // If title changes (nav from another page), keep in sync
   useEffect(() => {
     if (title) setMovieName(title);
   }, [title]);
 
-  // Seat sections
   const sections = [
     { type: "Platinum", price: 450, rows: 2, seatsPerRow: 12 },
     { type: "Gold", price: 350, rows: 3, seatsPerRow: 16 },
@@ -46,11 +45,22 @@ const SeatSelection = () => {
 
   const handleSeatClick = (seatId) => {
     if (bookedSeats.includes(seatId)) return;
-    setSelectedSeats((prev) =>
-      prev.includes(seatId)
-        ? prev.filter((s) => s !== seatId)
-        : [...prev, seatId]
-    );
+
+    setSelectedSeats((prev) => {
+      const alreadySelected = prev.includes(seatId);
+
+      // Allow deselect anytime
+      if (alreadySelected) {
+        return prev.filter((s) => s !== seatId);
+      }
+
+      // Prevent selecting more than MAX_SEATS
+      if (prev.length >= MAX_SEATS) {
+        return prev;
+      }
+
+      return [...prev, seatId];
+    });
   };
 
   const totalPrice = selectedSeats.reduce((sum, seatId) => {
@@ -61,10 +71,11 @@ const SeatSelection = () => {
 
   let globalRowIndex = 0;
 
-  // Available times (fallback)
   const availableTimes = times.length
     ? times
     : ["10:20 AM", "01:20 PM", "05:55 PM", "09:35 PM"];
+
+  const hasReachedLimit = selectedSeats.length >= MAX_SEATS;
 
   return (
     <div
@@ -151,19 +162,27 @@ const SeatSelection = () => {
                                 const extraSpace =
                                   aislePositions.includes(seatNumber);
 
+                                // Disable unselected seats when limit reached (selected ones remain clickable for deselect)
+                                const isDisabledByLimit =
+                                  !isSelected && hasReachedLimit;
+
+                                const disabled = isBooked || isDisabledByLimit;
+
                                 return (
                                   <React.Fragment key={seatIndex}>
                                     <button
                                       onClick={() => handleSeatClick(seatId)}
-                                      disabled={isBooked}
+                                      disabled={disabled}
                                       className={`w-6 h-6 m-0.5 rounded flex items-center justify-center border text-[10px]
-                                      ${
-                                        isBooked
-                                          ? "bg-orange-600 text-white font-bold cursor-not-allowed"
-                                          : isSelected
-                                          ? "bg-green-500 text-white shadow-[0_0_8px_rgba(0,255,0,0.7)]"
-                                          : "bg-gray-800 border-gray-600 hover:bg-gray-700"
-                                      } transition-all duration-200`}
+                                        ${
+                                          isBooked
+                                            ? "bg-orange-600 text-white font-bold cursor-not-allowed"
+                                            : isSelected
+                                            ? "bg-green-500 text-white shadow-[0_0_8px_rgba(0,255,0,0.7)]"
+                                            : disabled
+                                            ? "bg-gray-700 border-gray-600 opacity-50 cursor-not-allowed"
+                                            : "bg-gray-800 border-gray-600 hover:bg-gray-700"
+                                        } transition-all duration-200`}
                                     >
                                       {seatNumber}
                                     </button>
@@ -191,7 +210,7 @@ const SeatSelection = () => {
             {/* RIGHT: selected seats */}
             <aside className="w-fit shrink-0 sticky top-24 self-start">
               <h4 className="font-semibold text-lg text-white">
-                Selected Seats ({selectedSeats.length})
+                Selected Seats ({selectedSeats.length}/{MAX_SEATS})
               </h4>
               <div className="mt-2 max-h-[50vh] overflow-auto pr-1 w-fit">
                 {selectedSeats.length === 0 ? (
@@ -209,6 +228,15 @@ const SeatSelection = () => {
                   </ul>
                 )}
               </div>
+              {/* Limit notice */}
+              <p className="text-sm text-yellow-300 text-center mt-1">
+                *Maximum {MAX_SEATS} seats per booking
+                {hasReachedLimit && (
+                  <span className="block text-center text-base font-semibold text-[#EF233C] rounded-full mt-1">
+                    Seat limit reached
+                  </span>
+                )}
+              </p>
             </aside>
           </div>
         </div>

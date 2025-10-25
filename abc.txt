@@ -79,3 +79,98 @@ CREATE TABLE public.events (
     rating           NUMERIC(2,1),
     likes            INTEGER DEFAULT 0
 );
+
+
+
+..................................................................................
+
+EventU/
+│── frontend/                  # React client
+│   │── public/                # Static files (index.html, favicon, etc.)
+│   │── src/
+│   │   │── App.js
+│   │   │── index.js
+│   │   │── index.css
+│   │   │── App.test.js
+│   │   │
+│   │   ├── assets/            # Images, logos, animations
+│   │   │   ├── logo.png
+│   │   │   ├── seatbg.png
+│   │   │   └── ...
+│   │   │
+│   │   ├── Components/        # Reusable UI parts
+│   │   │   ├── JsCompo/       # JS + Tailwind based components
+│   │   │   │   ├── Navbar.jsx
+│   │   │   │   ├── Footer.jsx
+│   │   │   │   ├── Loader.jsx
+│   │   │   │   ├── BookingModal.jsx
+│   │   │   │   ├── Recomend.jsx
+│   │   │   │   └── ...
+│   │   │   └── Images/        # Component-specific images
+│   │   │       ├── comedyLadder.jpg
+│   │   │       ├── poster1.jpg
+│   │   │       └── ...
+│   │   │
+│   │   ├── Pages/             # Route pages
+│   │   │   ├── Home.jsx
+│   │   │   ├── MovieList.jsx
+│   │   │   ├── Movie.jsx
+│   │   │   ├── EventInfo.jsx
+│   │   │   ├── Booking.jsx
+│   │   │   ├── SeatDetail.jsx (SeatSelection)
+│   │   │   ├── Payment.jsx
+│   │   │   └── Care.jsx
+│   │   │
+│   │   ├── context/           # React Context API
+│   │   │   └── AuthContext.js
+│   │   │
+│   │   ├── services/          # API calls / axios utils
+│   │   │   └── api.js
+│   │   │
+│   │   └── utils/             # Helpers (formatting, constants)
+│   │       └── format.js
+│   │
+│   ├── tailwind.config.js
+│   ├── package.json
+│   └── .env                   # frontend environment variables
+│
+│── server/                    # Express + Postgres backend
+│   ├── config/                # DB + app config
+│   │   └── db.js
+│   │
+│   ├── controllers/           # Logic for handling requests
+│   │   ├── movieController.js
+│   │   ├── eventController.js
+│   │   ├── bookingController.js
+│   │   └── authController.js
+│   │
+│   ├── middleware/            # Middlewares (auth, errors, etc.)
+│   │   ├── authMiddleware.js
+│   │   ├── errorMiddleware.js
+│   │   └── cors.js
+│   │
+│   ├── models/                # Database models / queries
+│   │   ├── Movie.js
+│   │   ├── Event.js
+│   │   ├── Booking.js
+│   │   └── User.js
+│   │
+│   ├── routes/                # Express routes
+│   │   ├── movieRoutes.js
+│   │   ├── eventRoutes.js
+│   │   ├── bookingRoutes.js
+│   │   └── authRoutes.js
+│   │
+│   ├── utils/                 # Utility functions
+│   │   └── logger.js
+│   │
+│   ├── cron/                  # Scheduled jobs (if needed)
+│   │   └── seedShowtimes.js
+│   │
+│   ├── .env                   # backend env vars (DB creds, JWT, etc.)
+│   ├── server.js              # Express entry point
+│   ├── package.json
+│   └── README.md
+│
+├── README.md                  # Main project readme
+└── .gitignore

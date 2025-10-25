@@ -9,7 +9,7 @@ class Event {
              price_from::float, start_date, end_date,
              languages, age_limit, duration_hours::float,
              category, venue, artist_names, artist_images,
-             rating, status, created_at, updated_at
+             rating, status, likes, created_at, updated_at
       FROM events
       WHERE status = 'active'
     `;
@@ -28,7 +28,7 @@ class Event {
       }
 
       query += " ORDER BY start_date ASC";
-
+ 
       const result = await db.query(query, values);
       return result.rows;
     } catch (error) {

@@ -99,13 +99,11 @@ async function signup(req, res) {
     });
 
     const accessToken = await issueSession(res, user, req);
-    return res
-      .status(201)
-      .json({
-        user: serializeUser(user),
-        accessToken,
-        access_token_ttl: ACCESS_TOKEN_TTL,
-      });
+    return res.status(201).json({
+      user: serializeUser(user),
+      accessToken,
+      access_token_ttl: ACCESS_TOKEN_TTL,
+    });
   } catch (e) {
     console.error("signup error:", e);
     return res.status(500).json({ error: "Failed to sign up" });

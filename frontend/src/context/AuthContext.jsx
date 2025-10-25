@@ -46,7 +46,11 @@ export function AuthProvider({ children }) {
   }
 
   async function signup({ name, email, password }) {
-    const { data } = await api.post("/api/auth/signup", { name, email, password });
+    const { data } = await api.post("/api/auth/signup", {
+      name,
+      email,
+      password,
+    });
     setAccessToken(data.accessToken);
     setUser(data.user);
     closeAuthModal();
