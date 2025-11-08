@@ -73,6 +73,20 @@ api.interceptors.response.use(
     throw err;
   }
 );
+
+/**
+ * Payment helper: create checkout session
+ * body: { preset: 30 } or { customAmount: 75 } (amount in rupees)
+ * returns: { url, sessionId, ... } (whatever backend returns)
+ */
+export async function createCheckoutSession(body) {
+  const resp = await api.post("/api/payments/create-checkout-session", body);
+  return resp.data || {};
+}
+
+// Attach helper to api instance so existing code can call api.createCheckoutSession(...)
+api.createCheckoutSession = createCheckoutSession;
+
 export function getRandomHall(eventId) {
   return api.get(`/api/events/${eventId}/random-hall`);
 }

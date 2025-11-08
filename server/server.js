@@ -13,6 +13,8 @@ const searchRoutes = require("./routes/searchRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const bodyParser = require("body-parser");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 dotenv.config();
 const app = express();
@@ -61,7 +63,8 @@ app.use((err, _req, res, _next) => {
     .status(err.status || 500)
     .json({ error: err.message || "Internal Server Error" });
 });
-
+//payments
+app.use("/api/payments", paymentRoutes);
 // ----------------------------
 // Listen
 // ----------------------------

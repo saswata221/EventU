@@ -12,6 +12,8 @@ import MovieList from "./Pages/MovieList";
 import Customercare from "./Pages/CustomerCare";
 import SeatSelection from "./Pages/SeatDetail";
 import Payment from "./Pages/Payment";
+import PaymentSuccess from "./Pages/PaymentSuccess";
+import PaymentCancel from "./Pages/PaymentCancel";
 
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./Components/JsCompo/ProtectedRoute";
@@ -41,6 +43,8 @@ function App() {
             }
           />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment-cancel" element={<PaymentCancel />} />
 
           {/* Seat selection stays public (you wanted pre-login visit allowed) */}
           <Route path="/seats" element={<SeatSelection />} />

@@ -121,12 +121,13 @@ function MovieList() {
             <p className="text-white text-2xl mb-4">Movie Shows In Kolkata</p>
 
             {loading ? (
-              // 🔹 Loader centered in the cards section
               <div className="flex items-center justify-center h-[70vh]">
                 <Loader />
               </div>
             ) : movies.length === 0 ? (
-              <p className="text-gray-400">No movies found.</p>
+              <p className="text-3xl text-center text-[#EF233C]">
+                No movies found.
+              </p>
             ) : (
               <div className="flex flex-wrap">
                 {movies.map((movie) => (
