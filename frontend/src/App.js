@@ -14,6 +14,7 @@ import SeatSelection from "./Pages/SeatDetail";
 import Payment from "./Pages/Payment";
 import PaymentSuccess from "./Pages/PaymentSuccess";
 import PaymentCancel from "./Pages/PaymentCancel";
+import OpenAir from "./Pages/OpenAir";
 
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./Components/JsCompo/ProtectedRoute";
@@ -32,6 +33,7 @@ function App() {
           <Route path="/bookings/:id" element={<Booking />}></Route>
           <Route path="/listshow" element={<ListShow />}></Route>
           <Route path="/eventinfo/:id" element={<EventInfo />}></Route>
+          <Route path="/openair" element={<OpenAir />}></Route>
 
           {/* Only logged-in users can view their bookings */}
           <Route

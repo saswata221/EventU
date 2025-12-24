@@ -16,6 +16,9 @@ const adminRoutes = require("./routes/adminRoutes");
 const bodyParser = require("body-parser");
 const paymentRoutes = require("./routes/paymentRoutes");
 
+// ✅ SINGLE combined route for ALL sports (football, cricket, hockey, kabaddi)
+const openairCombinedRoutes = require("./routes/openairCombinedRoutes");
+
 dotenv.config();
 const app = express();
 
@@ -44,33 +47,36 @@ app.use(cookieParser());
 // ----------------------------
 app.use("/api/auth", authRoutes);
 app.use("/movies", movieRoutes);
-app.use("/booking", bookingRoutes); // GET /booking/:id (public), POST /booking (protected)
+app.use("/booking", bookingRoutes);
 app.use("/messages", messageRoutes);
 app.use("/feedback", feedbackRoutes);
 app.use("/search", searchRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/admin", adminRoutes);
+app.use("/api/payments", paymentRoutes);
+
+// 🟢 ONE unified sports endpoint
+// /api/openair?sport=football|cricket|hockey|kabaddi|all
+app.use("/api/openair", openairCombinedRoutes);
 
 // Health check
 app.get("/healthz", (_req, res) => res.json({ ok: true }));
 
-// ----------------------------
-// Error Handler
-// ----------------------------
+// Global error handler
 app.use((err, _req, res, _next) => {
   console.error("Unhandled error:", err);
   res
     .status(err.status || 500)
     .json({ error: err.message || "Internal Server Error" });
 });
-//payments
-app.use("/api/payments", paymentRoutes);
+
 // ----------------------------
 // Listen
 // ----------------------------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
+// Crons
 const { startRefreshCron } = require("./cron/refreshShowtimes");
 startRefreshCron();
 

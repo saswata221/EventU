@@ -128,7 +128,9 @@ function Navbar({ onLoginClick }) {
           <Link to="/movielist">
             <p>Movies</p>
           </Link>
-          <p>SPORTS</p>
+          <Link to="/openair">
+            <p>Sports</p>
+          </Link>
         </div>
         <div className="flex gap-10 px-5">
           <Link to="/listshow">

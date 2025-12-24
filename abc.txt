@@ -79,98 +79,171 @@ CREATE TABLE public.events (
     rating           NUMERIC(2,1),
     likes            INTEGER DEFAULT 0
 );
+..................................................................................
+-- cricket_teams
+CREATE TABLE IF NOT EXISTS cricket_teams (
+  id serial PRIMARY KEY,
+  external_id text UNIQUE,
+  name text NOT NULL,
+  logo_url text,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- cricket_fixtures
+CREATE TABLE IF NOT EXISTS cricket_fixtures (
+  id serial PRIMARY KEY,
+  external_id text UNIQUE,
+  competition_external_id text,
+  competition_name text,
+  home_team_id integer REFERENCES cricket_teams(id) ON DELETE SET NULL,
+  away_team_id integer REFERENCES cricket_teams(id) ON DELETE SET NULL,
+  venue text,
+  kickoff_utc timestamptz,
+  price numeric,
+  openpark_id integer, -- reuse your open_parks table if you want same UI location cards
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
 
 
 
 ..................................................................................
 
-EventU/
-│── frontend/                  # React client
-│   │── public/                # Static files (index.html, favicon, etc.)
-│   │── src/
-│   │   │── App.js
-│   │   │── index.js
-│   │   │── index.css
-│   │   │── App.test.js
-│   │   │
-│   │   ├── assets/            # Images, logos, animations
-│   │   │   ├── logo.png
-│   │   │   ├── seatbg.png
-│   │   │   └── ...
-│   │   │
-│   │   ├── Components/        # Reusable UI parts
-│   │   │   ├── JsCompo/       # JS + Tailwind based components
-│   │   │   │   ├── Navbar.jsx
-│   │   │   │   ├── Footer.jsx
-│   │   │   │   ├── Loader.jsx
-│   │   │   │   ├── BookingModal.jsx
-│   │   │   │   ├── Recomend.jsx
-│   │   │   │   └── ...
-│   │   │   └── Images/        # Component-specific images
-│   │   │       ├── comedyLadder.jpg
-│   │   │       ├── poster1.jpg
-│   │   │       └── ...
-│   │   │
-│   │   ├── Pages/             # Route pages
-│   │   │   ├── Home.jsx
-│   │   │   ├── MovieList.jsx
-│   │   │   ├── Movie.jsx
-│   │   │   ├── EventInfo.jsx
-│   │   │   ├── Booking.jsx
-│   │   │   ├── SeatDetail.jsx (SeatSelection)
-│   │   │   ├── Payment.jsx
-│   │   │   └── Care.jsx
-│   │   │
-│   │   ├── context/           # React Context API
-│   │   │   └── AuthContext.js
-│   │   │
-│   │   ├── services/          # API calls / axios utils
-│   │   │   └── api.js
-│   │   │
-│   │   └── utils/             # Helpers (formatting, constants)
-│   │       └── format.js
-│   │
-│   ├── tailwind.config.js
-│   ├── package.json
-│   └── .env                   # frontend environment variables
+EventU
 │
-│── server/                    # Express + Postgres backend
-│   ├── config/                # DB + app config
-│   │   └── db.js
+├── frontend
+│   ├── node_modules
+│   ├── public
+│   │   ├── Images
+│   │   ├── index.html
+│   │   └── manifest.json
 │   │
-│   ├── controllers/           # Logic for handling requests
-│   │   ├── movieController.js
-│   │   ├── eventController.js
-│   │   ├── bookingController.js
-│   │   └── authController.js
-│   │
-│   ├── middleware/            # Middlewares (auth, errors, etc.)
-│   │   ├── authMiddleware.js
-│   │   ├── errorMiddleware.js
-│   │   └── cors.js
-│   │
-│   ├── models/                # Database models / queries
-│   │   ├── Movie.js
-│   │   ├── Event.js
-│   │   ├── Booking.js
-│   │   └── User.js
-│   │
-│   ├── routes/                # Express routes
-│   │   ├── movieRoutes.js
-│   │   ├── eventRoutes.js
-│   │   ├── bookingRoutes.js
-│   │   └── authRoutes.js
-│   │
-│   ├── utils/                 # Utility functions
-│   │   └── logger.js
-│   │
-│   ├── cron/                  # Scheduled jobs (if needed)
-│   │   └── seedShowtimes.js
-│   │
-│   ├── .env                   # backend env vars (DB creds, JWT, etc.)
-│   ├── server.js              # Express entry point
-│   ├── package.json
-│   └── README.md
+│   └── src
+│       ├── Components
+│       │   ├── Images
+│       │   └── JsCompo
+│       │       ├── BookCard.jsx
+│       │       ├── BookingModal.jsx
+│       │       ├── Card.jsx
+│       │       ├── Carousal.jsx
+│       │       ├── DateCard.jsx
+│       │       ├── FavCard.jsx
+│       │       ├── Footer.jsx
+│       │       ├── ImageSlide.jsx
+│       │       ├── Loader.jsx
+│       │       ├── Modal.jsx
+│       │       ├── Navbar.jsx
+│       │       ├── OpenAirCard.jsx
+│       │       ├── OpenCard.jsx
+│       │       ├── PDropDown.jsx
+│       │       ├── PImage.jsx
+│       │       ├── ProtectedRoute.jsx
+│       │       ├── PText.jsx
+│       │       ├── PTimeDrop.jsx
+│       │       ├── Recomend.jsx
+│       │       ├── RoleGate.jsx
+│       │       ├── ScrollTop.jsx
+│       │       ├── SearchBar.jsx
+│       │       ├── Select_time.jsx
+│       │       └── Timings.jsx
+│       │
+│       ├── context
+│       │   └── _AuthContext.jsx
+│       │
+│       ├── database
+│       │   ├── FanFav.js
+│       │   ├── MoviesDb.js
+│       │   └── OpenAir.js
+│       │
+│       ├── Pages
+│       │   ├── Booking.jsx
+│       │   ├── CustomerCare.jsx
+│       │   ├── Event.jsx
+│       │   ├── EventInfo.jsx
+│       │   ├── Home.jsx
+│       │   ├── ListShow.jsx
+│       │   ├── Login.jsx
+│       │   ├── Movie.jsx
+│       │   ├── MovieList.jsx
+│       │   ├── OpenAir.jsx
+│       │   ├── Payment.jsx
+│       │   ├── PaymentCancel.jsx
+│       │   ├── PaymentSuccess.jsx
+│       │   ├── SeatDetail.jsx
+│       │   └── YourBookings.jsx
+│       │
+│       ├── services
+│       │   └── api.js
+│       │
+│       ├── App.js
+│       ├── App.test.js
+│       ├── index.css
+│       ├── index.js
+│       ├── .env
+│       ├── tailwind.config.js
+│       ├── package.json
+│       ├── package-lock.json
+│       ├── README.md
+│       └── abc.txt
 │
-├── README.md                  # Main project readme
-└── .gitignore
+└── server
+    ├── config
+    │   └── db.js
+    │
+    ├── controllers
+    │   ├── adminController.js
+    │   ├── authController.js
+    │   ├── bookingController.js
+    │   ├── eventController.js
+    │   ├── feedbackController.js
+    │   ├── messageController.js
+    │   ├── movieController.js
+    │   ├── paymentController.js
+    │   └── searchController.js
+    │
+    ├── cron
+    │   ├── refreshEventShowtimes.js
+    │   └── refreshShowtimes.js
+    │
+    ├── middleware
+    │   ├── optionalAuth.js
+    │   ├── requireAuth.js
+    │   └── requireRole.js
+    │
+    ├── migrations
+    │   └── create_payments_table.sql
+    │
+    ├── models
+    │   ├── eventModel.js
+    │   ├── movieModel.js
+    │   ├── Payment.js
+    │   ├── tokenModel.js
+    │   └── userModel.js
+    │
+    ├── routes
+    │   ├── adminRoutes.js
+    │   ├── authRoutes.js
+    │   ├── bookingRoutes.js
+    │   ├── eventRoutes.js
+    │   ├── feedbackRoutes.js
+    │   ├── messageRoutes.js
+    │   ├── movieRoutes.js
+    │   ├── paymentRoutes.js
+    │   └── searchRoutes.js
+    │
+    ├── utils
+    │   ├── cookies.js
+    │   ├── jwt.js
+    │   ├── logger.js
+    │   ├── mailer.js
+    │   └── password.js
+    │
+    ├── .env
+    ├── .gitignore
+    ├── insertMovies.js
+    ├── package-lock.json
+    ├── package.json
+    ├── server.js
+    ├── abc.txt
+    └── README.md

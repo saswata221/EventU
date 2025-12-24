@@ -27,7 +27,6 @@ export default function Home() {
       .catch(console.error);
   }, []);
 
-  // When the modal is open: blur + block interactions behind it
   const bgClasses = isLoginOpen
     ? "blur-[2px] scale-[.998] pointer-events-none select-none"
     : "";
@@ -118,7 +117,12 @@ export default function Home() {
             <div className="w-fit rounded-3xl bg-[#efebce] px-2 py-3">
               <div className="flex flex-wrap justify-center gap-4">
                 {OpenAir.map((o) => (
-                  <OpenAirCard key={o.id} text={o.text} imageURL={o.imageURL} />
+                  <OpenAirCard
+                    key={o.id}
+                    text={o.text}
+                    imageURL={o.imageURL}
+                    route={o.route}
+                  />
                 ))}
               </div>
             </div>
