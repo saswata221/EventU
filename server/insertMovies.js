@@ -34,6 +34,8 @@ async function getCast(movieId) {
 //insertinig datas into postgres
 async function fetchAndInsertMovies() {
   try {
+    await pool.query("DELETE FROM current_movies");
+
     const res = await axios.get(
       `https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&region=IN`
     );
